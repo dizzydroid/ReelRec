@@ -1,1 +1,1 @@
-> test cases / test plan go here
+> test cases go here
