@@ -1,0 +1,20 @@
+# Maven target directory
+target/
+
+# IDE-specific settings (VS Code, Eclipse, IntelliJ)
+.vscode/
+.project
+.classpath
+.settings/
+.idea/
+*.iml
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Other general ignores
+*.class
