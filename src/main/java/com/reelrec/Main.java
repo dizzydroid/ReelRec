@@ -27,7 +27,7 @@ public class Main {
         user1.addMovie(movie1);
         user1.addMovie(movie2);
         Existingusers.add(user1);
-      EachCategoryMovies.put("Action", new ArrayList<>());
+        EachCategoryMovies.put("Action", new ArrayList<>());
         EachCategoryMovies.put("Drama", new ArrayList<>());
         EachCategoryMovies.put("Comedy", new ArrayList<>());
         EachMovieCategories.put(movie1, List.of("Action", "Drama"));
