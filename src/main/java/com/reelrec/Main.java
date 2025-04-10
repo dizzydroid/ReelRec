@@ -18,7 +18,8 @@ public class Main {
  /*
   adding the initial users, it's names and their movies
   */
-        User user1 = new User("John Doe", new ArrayList<>());
+        User user1 = new User("John Doe","12345678X", new ArrayList<>());
+        User user2=new User("Jane Doe","87654321X", new ArrayList<>());
         Movie movie1 = new Movie();
         movie1.setID("M1");
         Movie movie2 = new Movie();
@@ -26,7 +27,10 @@ public class Main {
         FileWriter writer = null;
         user1.addToWatchList(movie1);
         user1.addToWatchList(movie2);
+        user2.addToWatchList(movie1);
+        user2.addToWatchList(movie2);
         Existingusers.add(user1);
+        Existingusers.add(user2);
         EachCategoryMovies.put("Action", new ArrayList<>());
         EachCategoryMovies.put("Drama", new ArrayList<>());
         EachCategoryMovies.put("Comedy", new ArrayList<>());
@@ -41,7 +45,7 @@ public class Main {
             e.printStackTrace();
         }
 
-
+ int tempcounter=1;
         for (User user : Existingusers)
         {
             List<Movie> userMovies = user.getWatchList();
@@ -62,11 +66,17 @@ public class Main {
                 }
             }
 
-            String userInfo = user.getName() + " , " + user.getId() + "\n";
+            String userInfo = user.getName() + ", " + user.getId() + "\n";
+            int counter=1;
             for (Movie movie : userMovies) {
-                userInfo += movie.getID() + ",";
+                userInfo += movie.getID();
+                if(counter!=userMovies.size())
+                    userInfo += ",";
+                counter++;
             }
+            if(tempcounter!=userMovies.size())
             userInfo += "\n";
+            tempcounter++;
 
             try {
                 writer.append(userInfo);
