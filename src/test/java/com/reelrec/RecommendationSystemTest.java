@@ -1,12 +1,9 @@
 package com.reelrec;
-
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
+import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RecommendationSystemTest {
     
@@ -15,8 +12,8 @@ public class RecommendationSystemTest {
     private TreeMap<String, List<Movie>> categoryMovies;
     private User testUser;
     private Movie movie1, movie2, movie3, movie4, movie5;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         // Create movies with title and ID
         movie1 = new Movie("Movie 1", "M1");
@@ -98,12 +95,12 @@ public class RecommendationSystemTest {
         List<Movie> recommendations = recommendationSystem.recommendMoviesForUser(testUser);
         
         // Check that we got recommendations
-        assertFalse("Should return recommendations", recommendations.isEmpty());
-        
+        assertFalse(recommendations.isEmpty(), "Should return recommendations");
+
         // Check that recommendations don't include watched movies
-        assertFalse("Should not recommend already watched movies", 
-                 recommendations.contains(movie1));
-        
+        assertFalse(recommendations.contains(movie1),
+                "Should not recommend already watched movies");
+
         // Check that recommendations include movies from watched categories
         boolean containsActionOrDrama = false;
         for (Movie movie : recommendations) {
@@ -113,7 +110,7 @@ public class RecommendationSystemTest {
                 break;
             }
         }
-        assertTrue("Should recommend movies from categories user has watched", containsActionOrDrama);
+        assertTrue(containsActionOrDrama, "Should recommend movies from categories user has watched");
     }
     
     @Test
@@ -122,10 +119,10 @@ public class RecommendationSystemTest {
         List<Movie> similarMovies = recommendationSystem.recommendSimilarMovies(movie1);
         
         // Check that we got recommendations
-        assertFalse("Should return similar movies", similarMovies.isEmpty());
+        assertFalse(similarMovies.isEmpty(), "Should return similar movies");
         
         // Check that the original movie is not in the recommendations
-        assertFalse("Should not include the original movie", similarMovies.contains(movie1));
+        assertFalse(similarMovies.contains(movie1), "Should not include the original movie");
         
         // Check that the recommendations are from shared categories
         boolean hasSharedCategory = false;
@@ -141,7 +138,7 @@ public class RecommendationSystemTest {
             }
         }
         
-        assertTrue("Similar movies should share at least one category", hasSharedCategory);
+        assertTrue(hasSharedCategory, "Similar movies should share at least one category");
     }
     
     @Test
@@ -150,29 +147,31 @@ public class RecommendationSystemTest {
         List<Movie> actionMovies = recommendationSystem.getMoviesByCategory("Action");
         
         // Should get movie1 and movie3
-        assertEquals("Should return 2 action movies", 2, actionMovies.size());
-        assertTrue("Should contain movie1", actionMovies.contains(movie1));
-        assertTrue("Should contain movie3", actionMovies.contains(movie3));
+        assertAll(
+                () ->  assertEquals(2, actionMovies.size(), "Should return 2 action movies"),
+                () -> assertTrue(actionMovies.contains(movie1), "Should contain movie1"),
+                () -> assertTrue(actionMovies.contains(movie3), "Should contain movie3"));
+
     }
     
     @Test
     public void testEdgeCases() {
         // Test with null user
         List<Movie> recommendations1 = recommendationSystem.recommendMoviesForUser(null);
-        assertTrue("Should return empty list for null user", recommendations1.isEmpty());
+        assertTrue(recommendations1.isEmpty(), "Should return empty list for null user");
         
         // Test with user having no watch history
         User emptyUser = new User("Empty User", "EMPTY001");
         List<Movie> recommendations2 = recommendationSystem.recommendMoviesForUser(emptyUser);
-        assertTrue("Should return empty list for user with no watch history", recommendations2.isEmpty());
+        assertTrue(recommendations2.isEmpty(), "Should return empty list for user with no watch history");
         
         // Test with non-existent movie
         Movie nonExistentMovie = new Movie("Non-existent", "NonExistent");
         List<Movie> similarMovies = recommendationSystem.recommendSimilarMovies(nonExistentMovie);
-        assertTrue("Should return empty list for non-existent movie", similarMovies.isEmpty());
+        assertTrue(similarMovies.isEmpty(), "Should return empty list for non-existent movie");
         
         // Test with non-existent category
         List<Movie> nonExistentCategoryMovies = recommendationSystem.getMoviesByCategory("NonExistentCategory");
-        assertTrue("Should return empty list for non-existent category", nonExistentCategoryMovies.isEmpty());
+        assertTrue(nonExistentCategoryMovies.isEmpty(), "Should return empty list for non-existent category");
     }
 }

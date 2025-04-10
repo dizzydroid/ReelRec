@@ -24,8 +24,8 @@ public class Main {
         Movie movie2 = new Movie();
         movie2.setID("M2");
         FileWriter writer = null;
-        user1.addMovie(movie1);
-        user1.addMovie(movie2);
+        user1.addToWatchList(movie1);
+        user1.addToWatchList(movie2);
         Existingusers.add(user1);
         EachCategoryMovies.put("Action", new ArrayList<>());
         EachCategoryMovies.put("Drama", new ArrayList<>());

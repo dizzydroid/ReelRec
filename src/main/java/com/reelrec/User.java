@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Scanner;
 
 public class User {
-    private int  id, NumberOfRegisteredUsers = 0;
-    private String name;
-    private List<Movie> WatchList;
+
+    private String name,id;
+    private List<Movie> WatchList= new java.util.ArrayList<Movie>();
     Scanner in = new Scanner(System.in);
 
     public String getName() {
         return name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -25,18 +25,24 @@ public class User {
     public User() {
         System.out.println("Enter your name");
         this.name =in.nextLine();
-        NumberOfRegisteredUsers++;
-        id = NumberOfRegisteredUsers;
+
+    }
+    public User(String name,String id) {
+        this.name = name;
+        this.id = id;
+    }
+    public User(String name,String id,List<Movie> WatchList) {
+  this(name,id);
+          this.WatchList = WatchList;
     }
 
     public User(String name, List<Movie> WatchList) {
         this.name = name;
         this.WatchList = WatchList;
-        NumberOfRegisteredUsers++;
-        id = NumberOfRegisteredUsers;
+
     }
 
-    public void addMovie(Movie movie) {
+    public void addToWatchList(Movie movie) {
         WatchList.add(movie);
 
     }

@@ -8,9 +8,9 @@ public class UserTest {
 
     @Test
     public void testUserCreation() {
-        User user = new User("John Doe", new ArrayList<>());
+        User user = new User("John Doe","M1", new ArrayList<>());
         assert user.getName().equals("John Doe");
-        assert user.getId() == 1; // Assuming this is the first user created
+        assert user.getId() == "M1"; // Assuming this is the first user created
     }
     @Test
     public void testAddMovie() {
@@ -18,8 +18,8 @@ public class UserTest {
         Movie movie = new Movie();
         movie.setID("M1");
 
-        user.addMovie(movie);
-        user.addMovie(new Movie() {{
+        user.addToWatchList(movie);
+        user.addToWatchList(new Movie() {{
             setID("M2");
         }});
         assert user.getWatchList().size() == 2;
