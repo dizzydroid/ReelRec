@@ -21,27 +21,6 @@ public class Validator {
     // Validates movie title (each word in the movie title starts with a capital
     // letter or a digit)
 
-    /*String checkMovieTitle(String title) {
-    String trimmedTitle = title.trim();
-    if (trimmedTitle.matches("^\\d+$")) {
-        return String.format("ERROR: Movie Title \"%s\" is wrong", title);
-    }
-
-    String[] words = trimmedTitle.split("\\s+");
-    for (String word : words) {
-        if (word.isEmpty()) {
-            return String.format("ERROR: Movie Title \"%s\" is wrong", title);
-        }
-
-        char firstChar = word.charAt(0);
-        if (!Character.isUpperCase(firstChar) && !Character.isDigit(firstChar)) {
-            return String.format("ERROR: Movie Title \"%s\" is wrong", title);
-        }
-    }
-
-    return "";
-}
- */
     String checkMovieTitle(String title) {
         if (title.trim().matches("^\\d+$")) {
             return String.format("ERROR: Movie Title \"%s\" is wrong", title);
@@ -227,6 +206,9 @@ public class Validator {
             if (matcher.find()) {
                 int lineNumber = Integer.parseInt(matcher.group(1));
                 errorLines.add(lineNumber);
+                if (lineNumber % 2 == 1) {
+                    errorLines.add(lineNumber + 1); // Add the next line number
+                }
             }
         }
         return new ArrayList<>(errorLines);

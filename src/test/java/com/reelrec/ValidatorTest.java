@@ -62,7 +62,7 @@ public class ValidatorTest {
     public void testcheckMovieTitle_titlewithnumbers() {
         String title = "Spider-Man 3";
         String result = validator.checkMovieTitle(title);
-        assertEquals("ERROR: Movie Title \"Spider-Man 3\" is wrong", result);
+        assertEquals("", result);
     }
 
     @Test
