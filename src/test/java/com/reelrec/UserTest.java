@@ -14,7 +14,7 @@ public class UserTest {
     }
     @Test
     public void testAddMovie() {
-        User user = new User("Jane Doe", new ArrayList<>());
+        User user = new User("Jane Doe","123456789X", new ArrayList<>());
         Movie movie = new Movie();
         movie.setID("M1");
 

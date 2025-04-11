@@ -7,8 +7,7 @@ import java.util.Scanner;
 public class User {
 
     private String name,id;
-    private List<Movie> WatchList= new java.util.ArrayList<Movie>();
-    Scanner in = new Scanner(System.in);
+    private List<Movie> WatchList;
 
     public String getName() {
         return name;
@@ -17,29 +16,29 @@ public class User {
     public String getId() {
         return id;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public List<Movie> getWatchList() {
         return WatchList;
     }
 
-    public User() {
-        System.out.println("Enter your name");
-        this.name =in.nextLine();
-
+    private User() {
     }
     public User(String name,String id) {
         this.name = name;
         this.id = id;
+        this.WatchList = new java.util.ArrayList<Movie>();
+
     }
     public User(String name,String id,List<Movie> WatchList) {
   this(name,id);
           this.WatchList = WatchList;
-    }
-
-    public User(String name, List<Movie> WatchList) {
-        this.name = name;
-        this.WatchList = WatchList;
-
     }
 
     public void addToWatchList(Movie movie) {
