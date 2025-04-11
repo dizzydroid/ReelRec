@@ -3,75 +3,219 @@ package com.reelrec;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.HashMap;
-
 public class MovieTest {
     
     @Test
-    public void testMakeHashMapWithValidData() {
-        Movie movie = new Movie();
-        // Use default paths - the files should be in the resources folder
+    public void testConstructorWithTwoParameters() {
+        // Test the constructor with id and name parameters
+        String id = "m001";
+        String name = "The Shawshank Redemption";
+        Movie movie = new Movie(id, name);
         
-        HashMap<String, HashMap<String, Movie>> result = movie.makeHashMap();
-        
-        assertNotNull(result, "Result should not be null");
-        assertEquals(2, result.size(), "Should have 2 users");
-        
-        // Check first user's movies
-        HashMap<String, Movie> user1Movies = result.get("12345678X");
-        assertNotNull(user1Movies, "User 1's movies should not be null");
-        assertEquals(2, user1Movies.size(), "User 1 should have 2 movies");
-        assertTrue(user1Movies.containsKey("TSR001"), "User 1 should have movie TSR001");
-        assertTrue(user1Movies.containsKey("TDK003"), "User 1 should have movie TDK003");
-        
-        // Check The Shawshank Redemption
-        Movie movie1 = user1Movies.get("TSR001");
-        assertEquals("TSR001", movie1.getID(), "Movie 1 ID should be TSR001");
-        assertEquals("The Shawshank Redemption", movie1.getName(), "Movie 1 name should be The Shawshank Redemption");
-        assertArrayEquals(new String[]{"Drama"}, movie1.getGenre(), "Movie 1 genres should match");
-        
-        // Check The Dark Knight 
-        Movie movie2 = user1Movies.get("TDK003");
-        assertEquals("TDK003", movie2.getID(), "Movie 2 ID should be TDK003");
-        assertEquals("The Dark Knight", movie2.getName(), "Movie 2 name should be The Dark Knight");
-        assertArrayEquals(new String[]{"Action", "Crime", "Drama"}, movie2.getGenre(), "Movie 2 genres should match");
-        
-        // Check second user's movies
-        HashMap<String, Movie> user2Movies = result.get("87654321W");
-        assertNotNull(user2Movies, "User 2's movies should not be null");
-        assertEquals(1, user2Movies.size(), "User 2 should have 1 movie");
-        assertTrue(user2Movies.containsKey("TG002"), "User 2 should have movie TG002");
-        
-        // Check The Godfather
-        Movie movie3 = user2Movies.get("TG002");
-        assertEquals("TG002", movie3.getID(), "Movie 3 ID should be TG002");
-        assertEquals("The Godfather", movie3.getName(), "Movie 3 name should be The Godfather");
-        assertArrayEquals(new String[]{"Crime", "Drama"}, movie3.getGenre(), "Movie 3 genres should match");
+        assertEquals(id, movie.getID(), "ID should match the constructor parameter");
+        assertEquals(name, movie.getName(), "Name should match the constructor parameter");
+        assertEquals(0, movie.getGenre().length, "Genres array should be empty");
     }
     
     @Test
-    public void testMakeHashMapWithEmptyFiles() {
-        Movie movie = new Movie();
-        movie.setResourcePaths("Testing/empty_resources/empty_movies.txt", "Testing/empty_resources/empty_users.txt");
+    public void testConstructorWithThreeParameters() {
+        // Test the constructor with id, name, and genres parameters
+        String id = "m002";
+        String name = "The Godfather";
+        String[] genres = {"Crime", "Drama"};
+        Movie movie = new Movie(id, name, genres);
         
-        HashMap<String, HashMap<String, Movie>> result = movie.makeHashMap();
-        
-        assertNotNull(result, "Result should not be null even with empty files");
-        assertEquals(0, result.size(), "Result should be empty");
+        assertEquals(id, movie.getID(), "ID should match the constructor parameter");
+        assertEquals(name, movie.getName(), "Name should match the constructor parameter");
+        assertArrayEquals(genres, movie.getGenre(), "Genres should match the constructor parameter");
     }
     
     @Test
-    public void testMakeHashMapWithMissingMovies() {
-        Movie movie = new Movie();
-        movie.setResourcePaths("Testing/limited/limitedMoviesFile.txt", "Testing/limited/usersWithMissingMoviesFile.txt");
+    public void testGettersAndSetters() {
+        Movie movie = new Movie("m003", "Pulp Fiction");
         
-        HashMap<String, HashMap<String, Movie>> result = movie.makeHashMap();
+        // Test setters
+        movie.setID("m004");
+        movie.setName("Inception");
+        String[] genres = {"Sci-Fi", "Action"};
+        movie.setGenre(genres);
         
-        assertNotNull(result, "Result should not be null");
-        assertEquals(1, result.size(), "Should have 1 user");
+        // Test getters
+        assertEquals("m004", movie.getID(), "getID should return the updated ID");
+        assertEquals("Inception", movie.getName(), "getName should return the updated name");
+        assertArrayEquals(genres, movie.getGenre(), "getGenre should return the updated genres");
+    }
+    
+    @Test
+    public void testCompareTo() {
+        Movie movie1 = new Movie("m001", "Movie A");
+        Movie movie2 = new Movie("m002", "Movie B");
+        Movie movie3 = new Movie("m001", "Different Name");
         
-        HashMap<String, Movie> userMovies = result.get("12345678X");
-        assertEquals(1, userMovies.size(), "User should have only 1 valid movie");
-        assertTrue(userMovies.containsKey("TSR001"), "User should have movie TSR001");
+        assertTrue(movie1.compareTo(movie2) < 0, "m001 should be less than m002");
+        assertTrue(movie2.compareTo(movie1) > 0, "m002 should be greater than m001");
+        assertEquals(0, movie1.compareTo(movie3), "Movies with same ID should be equal");
+    }
+    
+    @Test
+    public void testEquals() {
+        Movie movie1 = new Movie("m001", "Movie A");
+        Movie movie2 = new Movie("m001", "Different Name");
+        Movie movie3 = new Movie("m002", "Movie A");
+        
+        assertEquals(movie1, movie2, "Movies with same ID should be equal");
+        assertNotEquals(movie1, movie3, "Movies with different IDs should not be equal");
+        assertNotEquals(movie1, null, "Movie should not equal null");
+        assertNotEquals(movie1, "Not a movie", "Movie should not equal a different type");
+    }
+    
+    @Test
+    public void testHashCode() {
+        Movie movie1 = new Movie("m001", "Movie A");
+        Movie movie2 = new Movie("m001", "Different Name");
+        
+        assertEquals(movie1.hashCode(), movie2.hashCode(), "Movies with same ID should have same hash code");
+    }
+
+    // Additional tests below
+    
+    @Test
+    public void testEmptyIDAndName() {
+        Movie movie = new Movie("", "");
+        assertEquals("", movie.getID(), "Empty ID should be allowed");
+        assertEquals("", movie.getName(), "Empty name should be allowed");
+    }
+    
+    @Test
+    public void testNullIDAndName() {
+        assertThrows(NullPointerException.class, () -> {
+            new Movie(null, "Test Movie");
+        }, "Constructor should throw NullPointerException when ID is null");
+        
+        assertThrows(NullPointerException.class, () -> {
+            new Movie("m001", null);
+        }, "Constructor should throw NullPointerException when name is null");
+    }
+    
+    @Test
+    public void testNullGenres() {
+        assertThrows(NullPointerException.class, () -> {
+            new Movie("m001", "Test Movie", null);
+        }, "Constructor should throw NullPointerException when genres is null");
+    }
+    
+    @Test
+    public void testGenreArrayWithNullElements() {
+        String[] genresWithNull = {"Action", null, "Comedy"};
+        Movie movie = new Movie("m001", "Test Movie", genresWithNull);
+        assertArrayEquals(genresWithNull, movie.getGenre(), "Genres array with null elements should be allowed");
+    }
+    
+    @Test
+    public void testSetNullValues() {
+        Movie movie = new Movie("m001", "Test Movie");
+        
+        assertThrows(NullPointerException.class, () -> {
+            movie.setID(null);
+        }, "setID should throw NullPointerException when ID is null");
+        
+        assertThrows(NullPointerException.class, () -> {
+            movie.setName(null);
+        }, "setName should throw NullPointerException when name is null");
+        
+        assertThrows(NullPointerException.class, () -> {
+            movie.setGenre(null);
+        }, "setGenre should throw NullPointerException when genres is null");
+    }
+    
+    @Test
+    public void testGenreArrayDefensiveCopy() {
+        // Test that modifying the original array doesn't affect the Movie object
+        String[] originalGenres = {"Action", "Adventure"};
+        Movie movie = new Movie("m001", "Test Movie", originalGenres);
+        
+        originalGenres[0] = "Comedy";
+        assertNotEquals("Comedy", movie.getGenre()[0], "Movie should have a defensive copy of genres");
+        
+        // Test that modifying the returned array doesn't affect the Movie object
+        String[] returnedGenres = movie.getGenre();
+        returnedGenres[0] = "Horror";
+        assertNotEquals("Horror", movie.getGenre()[0], "getGenre should return a defensive copy");
+    }
+    
+    @Test
+    public void testCompareToNull() {
+        Movie movie = new Movie("m001", "Test Movie");
+        
+        assertThrows(NullPointerException.class, () -> {
+            movie.compareTo(null);
+        }, "compareTo should throw NullPointerException when parameter is null");
+    }
+    
+    @Test
+    public void testCompareToCaseSensitivity() {
+        Movie movie1 = new Movie("M001", "Uppercase ID");
+        Movie movie2 = new Movie("m001", "Lowercase ID");
+        
+        assertNotEquals(0, movie1.compareTo(movie2), "compareTo should be case sensitive");
+    }
+    
+    @Test
+    public void testCompareToComplexIDs() {
+        Movie movie1 = new Movie("m9", "Movie 9");
+        Movie movie2 = new Movie("m10", "Movie 10");
+        
+        assertTrue(movie1.compareTo(movie2) < 0, "Lexicographic comparison: 'm9' should be less than 'm10'");
+    }
+    
+    @Test
+    public void testEqualsContractProperties() {
+        Movie movie1 = new Movie("m001", "Movie A");
+        Movie movie2 = new Movie("m001", "Movie B");
+        Movie movie3 = new Movie("m001", "Movie C");
+        
+        // Reflexivity
+        assertTrue(movie1.equals(movie1), "Object should equal itself");
+        
+        // Symmetry
+        assertTrue(movie1.equals(movie2) && movie2.equals(movie1), "equals should be symmetric");
+        
+        // Transitivity
+        assertTrue(movie1.equals(movie2) && movie2.equals(movie3) && movie1.equals(movie3), 
+                "equals should be transitive");
+        
+        // Consistency
+        boolean firstResult = movie1.equals(movie2);
+        boolean secondResult = movie1.equals(movie2);
+        assertEquals(firstResult, secondResult, "Multiple invocations of equals should return the same result");
+    }
+    
+    @Test
+    public void testHashCodeConsistency() {
+        Movie movie = new Movie("m001", "Original Name");
+        int originalHashCode = movie.hashCode();
+        
+        // Hash code should be consistent across multiple calls
+        assertEquals(originalHashCode, movie.hashCode(), "hashCode should return consistent results");
+        
+        // Hash code should only depend on ID
+        movie.setName("Modified Name");
+        assertEquals(originalHashCode, movie.hashCode(), "hashCode should depend only on ID, not on name");
+        
+        String[] genres = {"Action", "Comedy"};
+        movie.setGenre(genres);
+        assertEquals(originalHashCode, movie.hashCode(), "hashCode should depend only on ID, not on genres");
+    }
+    
+    @Test
+    public void testIDCaseSensitivity() {
+        Movie movie1 = new Movie("m001", "Movie A");
+        Movie movie2 = new Movie("M001", "Movie A");
+        
+        // Test case sensitivity in equals method
+        assertNotEquals(movie1, movie2, "equals should be case sensitive for IDs");
+        
+        // Test case sensitivity in hashCode
+        assertNotEquals(movie1.hashCode(), movie2.hashCode(), "hashCode should be case sensitive for IDs");
     }
 }
