@@ -31,16 +31,16 @@ public class Main {
         // Create validator and validate the files
         InputValidator validator = new InputValidator();
 
-        String movieValidationError = validator.parseAndValidateMovies(moviesFilePath);
+        List<String> movieValidationError = validator.parseAndValidateMovies(moviesFilePath);
         if (!movieValidationError.isEmpty()) {
-            writeErrorToFile(recommendationsFilePath, movieValidationError);
+            writeErrorToFile(recommendationsFilePath, movieValidationError.get(0));
             System.out.println("Error in movies file: " + movieValidationError);
             return;
         }
 
-        String userValidationError = validator.parseAndValidateUsers(usersFilePath);       
+        List<String> userValidationError = validator.parseAndValidateUsers(usersFilePath);       
         if (!userValidationError.isEmpty()) {
-            writeErrorToFile(recommendationsFilePath, userValidationError);
+            writeErrorToFile(recommendationsFilePath, userValidationError.get(0));
             System.out.println("Error in users file: " + userValidationError);
             return;
         }
