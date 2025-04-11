@@ -10,13 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class InputValidator {
+public class Validator {
     Set<String> existingMovieIds = new HashSet<>();
     Set<String> existingMovieIdNumbers = new HashSet<>();
     Set<String> existingUserIds = new HashSet<>();
     List<String> validGenres = Arrays.asList("ACTION", "COMEDY", "CRIME", "DOCUMENTARY", "DRAMA",
                                                      "FAMILY", "HORROR", "ROMANCE", "SCIFI", "THRILLER");
-    
+
     // Validates movie title (each word in the movie title starts with a capital letter or a digit)
     String checkMovieTitle(String title) {
         String[] words = title.trim().split("\\s");

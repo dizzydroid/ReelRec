@@ -10,6 +10,7 @@ public class RecommendationSystem {
     private Map<String, Movie> movieIdMap;
     private List<User> users;
 
+
     public RecommendationSystem() {
         this.movieCategories = new TreeMap<>();
         this.categoryMovies = new TreeMap<>();
@@ -54,14 +55,19 @@ public class RecommendationSystem {
      * Loads movies from a text file.
      * Format: "Movie Title, MovieID" followed by categories on next line
      */
-    public void loadMoviesFromFile(String filePath) throws IOException {
+    public void loadMoviesFromFile(String filePath, ArrayList<Integer> validLines) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             Movie currentMovie = null;
+            int lineNumber = 0;
             
             while ((line = reader.readLine()) != null) {
+
+                lineNumber += 1;
+
                 line = line.trim();
-                if (line.isEmpty()) continue;
+                
+                if (line.isEmpty() || validLines.contains(lineNumber)) continue;
                 
                 if (line.contains(",")) {
                     // This is a movie title and ID line
@@ -96,14 +102,17 @@ public class RecommendationSystem {
      * Loads user data from a text file.
      * Format: "Username, UserID" followed by watched movie IDs on next line
      */
-    public void loadUsersFromFile(String filePath) throws IOException {
+    public void loadUsersFromFile(String filePath, ArrayList<Integer> validLines) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             User currentUser = null;
+            int lineNumber = 0;
             
             while ((line = reader.readLine()) != null) {
+                lineNumber += 1;
                 line = line.trim();
-                if (line.isEmpty()) continue;
+
+                if (line.isEmpty() || validLines.contains(lineNumber)) continue;
                 
                 if (line.contains(",")) {
                     // This is a user name and ID line

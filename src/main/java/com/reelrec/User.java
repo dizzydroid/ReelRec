@@ -28,8 +28,6 @@ public class User {
         return WatchList;
     }
 
-    private User() {
-    }
     public User(String name,String id) {
         this.name = name;
         this.id = id;

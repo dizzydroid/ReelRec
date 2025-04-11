@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-public class InputValidatorTest {
+public class ValidatorTest {
 
-    private static InputValidator validator;
+    private static Validator validator;
 
     @BeforeAll
     public static void setUp() {
-        validator = new InputValidator();
+        validator = new Validator();
     }
 
     @Test
