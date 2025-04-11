@@ -1,5 +1,9 @@
 package com.reelrec;
 import org.junit.jupiter.api.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -151,7 +155,21 @@ public class RecommendationSystemTest {
                 () ->  assertEquals(2, actionMovies.size(), "Should return 2 action movies"),
                 () -> assertTrue(actionMovies.contains(movie1), "Should contain movie1"),
                 () -> assertTrue(actionMovies.contains(movie3), "Should contain movie3"));
-
+    }
+    
+    @Test
+    public void testGetUsers() {
+        // Initial test with empty users list
+        List<User> initialUsers = recommendationSystem.getUsers();
+        assertTrue(initialUsers.isEmpty(), "Initial users list should be empty");
+        
+        // Add testUser to the recommendation system's users list manually
+        recommendationSystem.getUsers().add(testUser);
+        
+        // Test after adding a user
+        List<User> updatedUsers = recommendationSystem.getUsers();
+        assertEquals(1, updatedUsers.size(), "Users list should contain one user");
+        assertEquals(testUser, updatedUsers.get(0), "Users list should contain testUser");
     }
     
     @Test
@@ -173,5 +191,55 @@ public class RecommendationSystemTest {
         // Test with non-existent category
         List<Movie> nonExistentCategoryMovies = recommendationSystem.getMoviesByCategory("NonExistentCategory");
         assertTrue(nonExistentCategoryMovies.isEmpty(), "Should return empty list for non-existent category");
+    }
+
+    @Test
+    public void testWriteRecommendationsToFile() throws IOException {
+        // Create a temporary file for testing
+        File tempFile = File.createTempFile("test-recommendations", ".txt");
+        String outputPath = tempFile.getAbsolutePath();
+        
+        // Add our test user to the recommendation system
+        recommendationSystem.getUsers().add(testUser);
+        
+        try {
+            // Write recommendations to the file
+            recommendationSystem.writeRecommendationsToFile(testUser, outputPath);
+            
+            // Read the content of the file
+            List<String> fileLines = Files.readAllLines(tempFile.toPath());
+            
+            // Verify file content format
+            assertTrue(fileLines.size() >= 2, "File should contain at least 2 lines");
+            assertEquals("Test User, USER001", fileLines.get(0), 
+                    "First line should contain user name and ID");
+            
+            // Get expected recommendations
+            List<Movie> expectedRecommendations = recommendationSystem.recommendMoviesForUser(testUser);
+            
+            if (expectedRecommendations.isEmpty()) {
+                assertEquals("No recommendations", fileLines.get(1), 
+                        "Should indicate no recommendations");
+            } else {
+                // Check that the movie titles are in the file
+                String secondLine = fileLines.get(1);
+                
+                // Check that each movie title from the expected recommendations is in the file
+                for (Movie movie : expectedRecommendations) {
+                    assertTrue(secondLine.contains(movie.getName()), 
+                            "Recommendations should contain movie title: " + movie.getName());
+                }
+                
+                // If there are multiple recommendations, check they're comma-separated
+                if (expectedRecommendations.size() > 1) {
+                    String[] recommendedTitles = secondLine.split(", ");
+                    assertEquals(expectedRecommendations.size(), recommendedTitles.length,
+                            "Number of recommended movies should match");
+                }
+            }
+        } finally {
+            // Clean up the temporary file
+            tempFile.delete();
+        }
     }
 }

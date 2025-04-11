@@ -8,18 +8,13 @@ public class RecommendationSystem {
     private TreeMap<Movie, List<String>> movieCategories;
     private TreeMap<String, List<Movie>> categoryMovies;
     private Map<String, Movie> movieIdMap;
+    private List<User> users;
 
     public RecommendationSystem() {
         this.movieCategories = new TreeMap<>();
         this.categoryMovies = new TreeMap<>();
         this.movieIdMap = new HashMap<>();
-    }
-
-    /**
-     * TODO: getUsers method
-     */
-    public List<User> getUsers(){
-        return new ArrayList<>(Collections.emptyList());
+        this.users = new ArrayList<>();
     }
     
     public RecommendationSystem(TreeMap<Movie, List<String>> movieCategories, 
@@ -27,6 +22,7 @@ public class RecommendationSystem {
         this.movieCategories = movieCategories;
         this.categoryMovies = categoryMovies;
         this.movieIdMap = new HashMap<>();
+        this.users = new ArrayList<>();
         
         // Populate movieIdMap for existing movies
         for (Movie movie : movieCategories.keySet()) {
@@ -34,6 +30,26 @@ public class RecommendationSystem {
         }
     }
     
+    public List<User> getUsers() {
+        return users;
+    }
+    
+    public Movie getMovieById(String id) {
+        return movieIdMap.get(id);
+    }
+    
+    public List<Movie> getMoviesByCategory(String category) {
+        List<Movie> result = new ArrayList<>();
+        List<Movie> movies = categoryMovies.get(category);
+        
+        if (movies == null) {
+            return result;
+        }
+        
+        // Return all movies in the category
+        return new ArrayList<>(movies);
+    }
+
     /**
      * Loads movies from a text file.
      * Format: "Movie Title, MovieID" followed by categories on next line
@@ -95,7 +111,8 @@ public class RecommendationSystem {
                     String name = parts[0].trim();
                     String id = parts[1].trim();
                     
-                    currentUser = new User(name, id);  // add in user class
+                    currentUser = new User(name, id);
+                    users.add(currentUser);  // Add user to the users list
                 } else if (currentUser != null) {
                     // This is a watched movies line
                     String[] movieIds = line.split(",");
@@ -103,7 +120,7 @@ public class RecommendationSystem {
                         movieId = movieId.trim();
                         Movie movie = movieIdMap.get(movieId);
                         if (movie != null) {
-                            currentUser.addToWatchList(movie); // add in user class
+                            currentUser.addToWatchList(movie);
                         }
                     }
                 }
@@ -112,19 +129,22 @@ public class RecommendationSystem {
     }
     
     /**
-     * Writes recommendations for a user to a file
+     * Writes recommendations for a user to a file.
+     * Format:nUsername, UserID followed by recommended movie titles on the next line
      */
     public void writeRecommendationsToFile(User user, String outputPath) throws IOException {
         List<Movie> recommendations = recommendMoviesForUser(user);
         
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath, true))) {
+            // Write user name and ID
             writer.write(user.getName() + ", " + user.getId());
             writer.newLine();
             
+            // Write recommended movie titles (not IDs)
             if (!recommendations.isEmpty()) {
                 StringJoiner joiner = new StringJoiner(", ");
                 for (Movie movie : recommendations) {
-                    joiner.add(movie.getID());
+                    joiner.add(movie.getName());
                 }
                 writer.write(joiner.toString());
             } else {
@@ -133,13 +153,6 @@ public class RecommendationSystem {
             writer.newLine();
             writer.newLine(); // Empty line between users
         }
-    }
-    
-    /**
-     * Gets a movie by its ID
-     */
-    public Movie getMovieById(String id) {
-        return movieIdMap.get(id);
     }
     
     /**
@@ -215,18 +228,5 @@ public class RecommendationSystem {
         }
         
         return similarMovies;
-    }
-    
-    //Gets movies from a specific category.
-    public List<Movie> getMoviesByCategory(String category) {
-        List<Movie> result = new ArrayList<>();
-        List<Movie> movies = categoryMovies.get(category);
-        
-        if (movies == null) {
-            return result;
-        }
-        
-        // Return all movies in the category
-        return new ArrayList<>(movies);
     }
 }
