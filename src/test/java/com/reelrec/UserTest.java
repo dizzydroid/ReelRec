@@ -14,9 +14,10 @@ public class UserTest {
     }
     @Test
     public void testAddMovie() {
-        User user = new User("Jane Doe", new ArrayList<>());
-        Movie movie = new Movie("M1", "Movie 1");
-        
+        User user = new User("Jane Doe","123456789X", new ArrayList<>());
+        Movie movie = new Movie();
+        movie.setID("M1");
+
         user.addToWatchList(movie);
         user.addToWatchList(new Movie("M2", "Movie 2"));
         assert user.getWatchList().size() == 2;
