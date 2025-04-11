@@ -5,39 +5,71 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Validator {
     Set<String> existingMovieIds = new HashSet<>();
     Set<String> existingMovieIdNumbers = new HashSet<>();
     Set<String> existingUserIds = new HashSet<>();
     List<String> validGenres = Arrays.asList("ACTION", "COMEDY", "CRIME", "DOCUMENTARY", "DRAMA",
-                                                     "FAMILY", "HORROR", "ROMANCE", "SCIFI", "THRILLER");
+            "FAMILY", "HORROR", "ROMANCE", "SCIFI", "THRILLER");
 
-    // Validates movie title (each word in the movie title starts with a capital letter or a digit)
+    // Validates movie title (each word in the movie title starts with a capital
+    // letter or a digit)
+
+    /*String checkMovieTitle(String title) {
+    String trimmedTitle = title.trim();
+    if (trimmedTitle.matches("^\\d+$")) {
+        return String.format("ERROR: Movie Title \"%s\" is wrong", title);
+    }
+
+    String[] words = trimmedTitle.split("\\s+");
+    for (String word : words) {
+        if (word.isEmpty()) {
+            return String.format("ERROR: Movie Title \"%s\" is wrong", title);
+        }
+
+        char firstChar = word.charAt(0);
+        if (!Character.isUpperCase(firstChar) && !Character.isDigit(firstChar)) {
+            return String.format("ERROR: Movie Title \"%s\" is wrong", title);
+        }
+    }
+
+    return "";
+}
+ */
     String checkMovieTitle(String title) {
+        if (title.trim().matches("^\\d+$")) {
+            return String.format("ERROR: Movie Title \"%s\" is wrong", title);
+        }
         String[] words = title.trim().split("\\s");
         for (String word : words) {
-            if (word.isEmpty() || !Character.isUpperCase(word.charAt(0))) {
+            if (word.isEmpty()) {
+                return String.format("ERROR: Movie Title \"%s\" is wrong", title);
+            }
+            char firstChar = word.charAt(0);
+            if (!Character.isUpperCase(firstChar) && !Character.isDigit(firstChar)) {
                 return String.format("ERROR: Movie Title \"%s\" is wrong", title);
             }
         }
         return "";
     }
 
-    // Validates movie ID (starts with capital letters of the title, followed by 3 unique digits)
+    // Validates movie ID (starts with capital letters of the title, followed by 3
+    // unique digits)
     // Note: this assumes valid movie title is already checked
     String checkMovieId(String movieId, String title) {
-        if(!movieId.matches("^[A-Z]+\\d{3}$")){
+        if (!movieId.matches("^[A-Z]+\\d{3}$")) {
             return String.format("ERROR: Movie Id format \"%s\" is wrong", movieId);
         }
         String capitalLetters = new String();
         for (char letter : title.toCharArray()) {
             if (Character.isUpperCase(letter)) {
-                capitalLetters+= letter;
+                capitalLetters += letter;
             }
         }
         String IdPattern = capitalLetters + "\\d{3}";
@@ -50,8 +82,8 @@ public class Validator {
     }
 
     // Validates movie genre (only valid genres are allowed)
-    String checkMovieGenre(String genre){
-        if(!validGenres.contains(genre.toUpperCase())){
+    String checkMovieGenre(String genre) {
+        if (!validGenres.contains(genre.toUpperCase())) {
             return String.format("ERROR: Movie genre \"%s\" is not supported", genre);
         }
         return "";
@@ -59,153 +91,144 @@ public class Validator {
 
     // Validates user name (only alphabet and space, no starting space)
     String checkUserName(String name) {
-        if(!name.matches("[A-Za-z]+(\\s[A-Za-z]+)*"))
+        if (!name.matches("[A-Za-z]+(\\s[A-Za-z]+)*"))
             return String.format("ERROR: User Name \"%s\" is wrong", name);
         return "";
     }
 
-    // Validates user ID (9 alphanumeric characters, starts with digits, may end with one letter)
+    // Validates user ID (9 alphanumeric characters, starts with digits, may end
+    // with one letter)
     String checkUserId(String userId) {
-        if (userId.matches("^\\d{8}[A-Za-z0-9]$")){
-            if (!this.existingUserIds.contains(userId)){
+        if (userId.matches("^\\d{8}[A-Za-z0-9]$")) {
+            if (!this.existingUserIds.contains(userId)) {
                 return "";
-            }
-            else{
+            } else {
                 return String.format("ERROR: User Id \"%s\" is not unique", userId);
             }
         }
-        return String.format("ERROR: User Id \"%s\" is wrong",userId);
+        return String.format("ERROR: User Id \"%s\" is wrong", userId);
     }
 
-    // Parses and validates movies from a file, returns a list of errors (if empty then no errors)
-    public HashMap<Movie,List<String>> parseAndValidateMovies(String filepath){
-        HashMap<Movie,List<String>> movies = new HashMap<>();
+    // Parses and validates movies from a file, returns a list of errors (if empty
+    // then no errors)
+    public List<String> parseAndValidateMovies(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int lineNumber = 1; 
+            int lineNumber = 1;
             String line;
-            String movieTitle, movieId, result;
+            String movetitle, movieId, result;
+            List<String> errors = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                Movie movie = new Movie(null, null);
-                List<String> errors = new ArrayList<>();
-                if(parts.length == 2){
-                    movieTitle = parts[0].trim();
+                if (parts.length == 2) {
+                    movetitle = parts[0].trim();
                     movieId = parts[1].trim();
-                    movie.setName(movieTitle);
-                    movie.setID(movieId);
-                    result = checkMovieTitle(movieTitle);
+                    result = checkMovieTitle(movetitle);
                     if (!result.equals("")) {
                         errors.add(result + " at line " + lineNumber);
-                    }
-                    else{
-                        result = checkMovieId(movieId, movieTitle);
+                    } else {
+                        result = checkMovieId(movieId, movetitle);
                         if (!result.equals("")) {
                             errors.add(result + " at line " + lineNumber);
+                        } else {
+                            String numberPart = movieId.replaceAll("[^0-9]", "");
+                            this.existingMovieIds.add(movieId);
+                            this.existingMovieIdNumbers.add(numberPart);
                         }
                     }
-                }
-                else{
-                    movie = null;
+                } else {
                     errors.add("ERROR: Movie Formatting is wrong at line " + lineNumber);
                 }
                 lineNumber++;
                 line = reader.readLine();
-                if(!line.isEmpty()){
+                if (!line.isEmpty()) {
                     parts = line.split(",");
-                    List<String> genres = new ArrayList<>();
-                    for(String genre : parts){
+                    for (String genre : parts) {
                         genre = genre.trim();
                         result = checkMovieGenre(genre);
                         if (!result.equals("")) {
                             errors.add(result + " at line " + lineNumber);
                         }
-                        else{   
-                            genres.add(genre.toUpperCase());
-                        }
                     }
-                    movie.setGenre(genres.toArray(new String[0]));
-                }
-                else{
+                } else {
                     errors.add("ERROR: Movie has no genres at line " + lineNumber);
                 }
-                String numberPart = movie.getID().replaceAll("[^0-9]", "");
-                this.existingMovieIds.add(movie.getID());
-                this.existingMovieIdNumbers.add(numberPart);
-                movies.put(movie, errors);
-                lineNumber++;
             }
 
-            return movies;
+            return errors;
 
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            List<String> errors = new ArrayList<>();
+            errors.add("ERROR: File not found or cannot be read");
+            return errors;
         }
     }
 
-    // Parses and validates users from a file, returns a list of errors (if empty then no errors)
-    // Note: before calling this call parseAndValidateMovies to populate existingMovieIds
-    public HashMap<User,List<String>> parseAndValidateUsers(String filepath){
-        HashMap<User,List<String>> users = new HashMap<>();
+    // Parses and validates users from a file, returns a list of errors (if empty
+    // then no errors)
+    // Note: before calling this call parseAndValidateMovies to populate
+    // existingMovieIds
+    public List<String> parseAndValidateUsers(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int lineNumber = 1; 
+            int lineNumber = 1;
             String line;
-            String userName, userId, result;
+            String username, userId, result;
+            List<String> errors = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                User user = new User(null, null);
-                List<String> errors = new ArrayList<>();
-                if(parts.length == 2){
-                    userName = parts[0].trim();
+                if (parts.length == 2) {
+                    username = parts[0].trim();
                     userId = parts[1].trim();
-                    user.setName(userName);
-                    user.setId(userId);
-                    result = checkUserName(userName);
+                    result = checkUserName(username);
                     if (!result.equals("")) {
                         errors.add(result + " at line " + lineNumber);
-                    }
-                    else{
+                    } else {
                         result = checkUserId(userId);
                         if (!result.equals("")) {
                             errors.add(result + " at line " + lineNumber);
+                        } else {
+                            this.existingUserIds.add(userId);
                         }
                     }
-                }
-                else{
-                    user = null;
+                } else {
                     errors.add("ERROR: User Formatting is wrong at line " + lineNumber);
                 }
                 lineNumber++;
                 line = reader.readLine();
-                // if(!line.isEmpty()){
-                //     parts = line.split(",");
-                //     List<String> movieIds = new ArrayList<>();
-                //     for(String movieId : parts){
-                //         movieId = movieId.trim();
-                //         if(!existingMovieIds.contains(movieId)){
-                //             errors.add("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber + " is not in the movie list");
-                //         }
-                //         else{
-                //             user.addToWatchList(movieId);
-                //         }
-                //     }
-                //     movie.setGenre(genres.toArray(new String[0]));
-                // }
-                // else{
-                //     errors.add("ERROR: Movie has no genres at line " + lineNumber);
-                // }
-
-                this.existingUserIds.add(user.getId());
-                users.put(user, errors);
-                lineNumber++;
+                if (!line.isEmpty()) {
+                    parts = line.split(",");
+                    for (String movieId : parts) {
+                        movieId = movieId.trim();
+                        if (!this.existingMovieIds.contains(movieId)) {
+                            errors.add("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber
+                                    + " is not in the movies file");
+                        }
+                    }
+                } else {
+                    errors.add("ERROR: User has no movies at line " + lineNumber);
+                }
             }
 
-            return users;
+            return errors;
 
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            List<String> errors = new ArrayList<>();
+            errors.add("ERROR: File not found or cannot be read");
+            return errors;
         }
     }
-  
+
+    public ArrayList<Integer> extractErrorLines(List<String> errors) {
+        Set<Integer> errorLines = new HashSet<>();
+        for (String error : errors) {
+            // Regex to find "at line {number}"
+            Matcher matcher = Pattern.compile("at line (\\d+)").matcher(error);
+            if (matcher.find()) {
+                int lineNumber = Integer.parseInt(matcher.group(1));
+                errorLines.add(lineNumber);
+            }
+        }
+        return new ArrayList<>(errorLines);
+    }
 }
