@@ -1,102 +1,83 @@
 package com.reelrec;
 
-import java.io.File;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.Scanner;
 
 public class Main {
-    private static TreeMap<Movie, List<String>> EachMovieCategories= new TreeMap<>();
-    private static TreeMap<String, List<Movie>> EachCategoryMovies=new TreeMap<>();
 
-    public static void main(String[] args) throws IOException {
-        List<User> Existingusers = new ArrayList<>();
- /*
-  adding the initial users, it's names and their movies
-  */
-        User user1 = new User("John Doe","12345678X", new ArrayList<>());
-        User user2=new User("Jane Doe","87654321X", new ArrayList<>());
-        Movie movie1 = new Movie();
-        movie1.setID("M1");
-        Movie movie2 = new Movie();
-        movie2.setID("M2");
-        FileWriter writer = null;
-        user1.addToWatchList(movie1);
-        user1.addToWatchList(movie2);
-        user2.addToWatchList(movie1);
-        user2.addToWatchList(movie2);
-        Existingusers.add(user1);
-        Existingusers.add(user2);
-        EachCategoryMovies.put("Action", new ArrayList<>());
-        EachCategoryMovies.put("Drama", new ArrayList<>());
-        EachCategoryMovies.put("Comedy", new ArrayList<>());
-        EachMovieCategories.put(movie1, List.of("Action", "Drama"));
-        EachMovieCategories.put(movie2, List.of("Comedy", "Drama"));
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to ReelRec - the Movie Recommendation System");
+        
+        System.out.println("Enter the path for the movies file (or press Enter to use default):");
+        String moviesFilePath = scanner.nextLine().trim();
+        if (moviesFilePath.isEmpty()) {
+            moviesFilePath = "src/main/resources/movies.txt";
+        }
+        
+        System.out.println("Enter the path for the users file (or press Enter to use default):");
+        String usersFilePath = scanner.nextLine().trim();
+        if (usersFilePath.isEmpty()) {
+            usersFilePath = "src/main/resources/users.txt";
+        }
+        
+        String recommendationsFilePath = "src/main/resources/recommendations.txt";
+
+        scanner.close();
+
+        // Create validator and validate the files
+        InputValidator validator = new InputValidator();
+
+        String movieValidationError = validator.parseAndValidateMovies(moviesFilePath);
+        if (!movieValidationError.isEmpty()) {
+            writeErrorToFile(recommendationsFilePath, movieValidationError);
+            System.out.println("Error in movies file: " + movieValidationError);
+            return;
+        }
+
+        String userValidationError = validator.parseAndValidateUsers(usersFilePath);       
+        if (!userValidationError.isEmpty()) {
+            writeErrorToFile(recommendationsFilePath, userValidationError);
+            System.out.println("Error in users file: " + userValidationError);
+            return;
+        }
+
+        // Create RecommendationSystem and load movies/users
+        RecommendationSystem recSys = new RecommendationSystem();
+        
         try {
-            writer = new FileWriter("src/main/resources/users.txt");
-
+            recSys.loadMoviesFromFile(moviesFilePath);
+            recSys.loadUsersFromFile(usersFilePath);
+        } catch (IOException e) {
+            writeErrorToFile(recommendationsFilePath, "ERROR: Could not load input files");
+            return;
         }
-        catch (IOException e) {
-            System.out.println("An error occurred in Opening users.txt.");
-            e.printStackTrace();
-        }
 
- int tempcounter=1;
-        for (User user : Existingusers)
-        {
-            List<Movie> userMovies = user.getWatchList();
-            for (Movie movie : userMovies) {
-                //  List<String> categories = movie.getCategories();
-                List<String> categories = EachMovieCategories.get(movie);// this line is prototype to remove errors
-                if (!EachMovieCategories.containsKey(movie)) {
-                    EachMovieCategories.put(movie, categories);
-                }
-                if (categories != null) {
-                    for (String category : categories) {
-                        if (!EachCategoryMovies.containsKey(category)) {
-                            EachCategoryMovies.put(category, new ArrayList<>());
-                        }
-                        if (!EachCategoryMovies.get(category).contains(movie))
-                            EachCategoryMovies.get(category).add(movie);
-                    }
-                }
-            }
-
-            String userInfo = user.getName() + ", " + user.getId() + "\n";
-            int counter=1;
-            for (Movie movie : userMovies) {
-                userInfo += movie.getID();
-                if(counter!=userMovies.size())
-                    userInfo += ",";
-                counter++;
-            }
-            if(tempcounter!=userMovies.size())
-            userInfo += "\n";
-            tempcounter++;
-
+        // For every user, write recommendations to the output file
+        List<User> users = recSys.getUsers();
+        for (User user : users) {
             try {
-                writer.append(userInfo);
-            }
-            catch (IOException e) {
-                System.out.println("An error occurred in Appending in users.txt.");
-                e.printStackTrace();
+                recSys.writeRecommendationsToFile(user, recommendationsFilePath);
+            } catch (IOException e) {
+                System.out.println("Error writing recommendations for user: " + user.getName());
             }
         }
 
-
-        writer.close();
+        System.out.println("Recommendations have been generated in: " + recommendationsFilePath);
     }
 
-
-    public static TreeMap<Movie, List<String>> getEachMovieCategories() {
-        return EachMovieCategories;
-    }
-
-    public TreeMap<String, List<Movie>> getEachCategoryMovies() {
-        return EachCategoryMovies;
+    
+    /**
+     * Writes an error message to the recommendations file and overwrites any existing content.
+     */
+    private static void writeErrorToFile(String filePath, String errorMsg) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(errorMsg);
+        } catch (IOException e) {
+            System.out.println("Error writing error message to recommendations file.");
+        }
     }
 }

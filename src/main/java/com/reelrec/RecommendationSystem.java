@@ -15,6 +15,12 @@ public class RecommendationSystem {
         this.movieIdMap = new HashMap<>();
     }
 
+    /**
+     * TODO: getUsers method
+     */
+    public List<User> getUsers(){
+        return new ArrayList<>(Collections.emptyList());
+    }
     
     public RecommendationSystem(TreeMap<Movie, List<String>> movieCategories, 
                                TreeMap<String, List<Movie>> categoryMovies) {
