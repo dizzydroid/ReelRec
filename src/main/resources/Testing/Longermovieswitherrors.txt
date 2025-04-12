@@ -1,0 +1,20 @@
+The Shawshank redemption, TSR001
+Drama
+The Godfather, TR002
+Crime, Drama
+The Dark Knight, TDK003
+Action, Crimea, Drama
+Inception, I004
+
+WALL-E, WALLE005, walle
+Family, Romance, Scifi
+Spider-man: Across The Spider-Verse, SMATV0046
+Action, Scifi, Familia
+The King’s Speech, TKS003
+Drama
+, GO008
+Horror, Thriller
+A Beautiful Mind, ABM010
+Drama, Romance
+1917, NS004
+Action

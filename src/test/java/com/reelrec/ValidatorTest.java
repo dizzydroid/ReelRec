@@ -1,19 +1,20 @@
 package com.reelrec;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ValidatorTest {
+    
+    private Validator validator;
 
-    private static Validator validator;
-
-    @BeforeAll
-    public static void setUp() {
-        validator = new Validator();
+    @BeforeEach
+    public void setUp() {
+        validator = new Validator(); // Initialize the class-level validator object
     }
 
     @Test
@@ -284,4 +285,88 @@ public class ValidatorTest {
         assertEquals("ERROR: User Id \"\" is wrong", result);
     }
 
+    @Test
+    public void testParseAndValidateMovies_ValidFile() {
+        String filepath = "src/main/resources/Testing/longermovieswithnoerrors.txt";
+        List<String> errors = validator.parseAndValidateMovies(filepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid movies file");
+    }
+
+    @Test
+    public void testParseAndValidateUsers_ValidFile() {
+        // Ensure movies are validated first to populate existingMovieIds
+        String moviesFilepath = "src/main/resources/Testing/longermovieswithnoerrors.txt";
+        validator.parseAndValidateMovies(moviesFilepath);
+
+        String usersFilepath = "src/main/resources/Testing/longeruserswithnoerrors.txt";
+        List<String> errors = validator.parseAndValidateUsers(usersFilepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid users file");
+    }
+
+    @Test
+    public void testParseAndValidateMovies_ShortFile() {
+        String filepath = "src/main/resources/movies.txt";
+        List<String> errors = validator.parseAndValidateMovies(filepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid short movies file");
+    }
+
+    @Test
+    public void testParseAndValidateUsers_ShortFile() {
+        // Ensure movies are validated first to populate existingMovieIds
+        String moviesFilepath = "src/main/resources/movies.txt";
+        validator.parseAndValidateMovies(moviesFilepath);
+
+        String usersFilepath = "src/main/resources/users.txt";
+        List<String> errors = validator.parseAndValidateUsers(usersFilepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid short users file");
+    }
+
+    @Test
+    public void testParseAndValidateMovies_inValidFile() {
+        String filepath = "src/main/resources/Testing/Longermovieswitherrors.txt";
+        List<String> errors = validator.parseAndValidateMovies(filepath);
+
+        // Expected errors based on the issues in the file
+        List<String> expectedErrors = List.of(
+            "ERROR: Movie Title \"The Shawshank redemption\" is wrong at line 1", // Wrong title
+            "ERROR: Movie Id letters \"TR002\" are wrong at line 3",              // Wrong letters in ID
+            "ERROR: Movie genre \"Crimea\" is not supported at line 6",           // Wrong genre
+            "ERROR: Movie has no genres at line 8",                               // No genres
+            "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format 
+            "ERROR: Movie Id format \"SMATV0046\" is wrong at line 11",           // Wrong title
+            "ERROR: Movie genre \"Familia\" is not supported at line 12",         // Wrong genre
+            "ERROR: Movie Id numbers \"TKS003\" aren't unique at line 13",        // non unique ID numbers
+            "ERROR: Movie Title \"\" is wrong at line 15",                        // Empty title
+            "ERROR: Movie Title \"1917\" is wrong at line 19"                    // Title with numbers
+        );
+
+        if (!errors.isEmpty()) {
+            System.out.println("Errors found in testParseAndValidateMovies_inValidFile:");
+            errors.forEach(System.out::println);
+        }
+
+        assertEquals(expectedErrors, errors);
+    }
+    // @Test
+    // public void testParseAndValidateUsers_invalidMoviesFile(){
+    //     String moviesFilepath = "src/main/resources/Testing/longermovieswitherrors.txt";
+    //     validator.parseAndValidateMovies(moviesFilepath);
+
+    //     String usersFilepath = "src/main/resources/Testing/longeruserswithnoerrors.txt";
+    //     List<String> errors = validator.parseAndValidateUsers(usersFilepath);
+    //     List<String> expectedErrors = List.of(
+    //         "ERROR: Movie Title \"The Shawshank redemption\" is wrong at line 1", // Wrong title
+    //         "ERROR: Movie Id letters \"TR002\" are wrong at line 3",              // Wrong letters in ID
+    //         "ERROR: Movie genre \"Crimea\" is not supported at line 6",           // Wrong genre
+    //         "ERROR: Movie has no genres at line 8",                               // No genres
+    //         "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format 
+    //         "ERROR: Movie Id format \"SMATV0046\" is wrong at line 11",           // Wrong title
+    //         "ERROR: Movie genre \"Familia\" is not supported at line 12",         // Wrong genre
+    //         "ERROR: Movie Id numbers \"TKS003\" aren't unique at line 13",        // non unique ID numbers
+    //         "ERROR: Movie Title \"\" is wrong at line 15",                        // Empty title
+    //         "ERROR: Movie Title \"1917\" is wrong at line 19"                    // Title with numbers
+    //     );
+    //     //("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber + " is not in the movies file");
+    //     assertEquals(expectedErrors, errors);
+    // }
 }
