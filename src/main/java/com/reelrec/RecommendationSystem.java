@@ -67,8 +67,8 @@ public class RecommendationSystem {
             while ((movieInfoLine = reader.readLine()) != null) {
                 lineNumber++;
                 movieInfoLine = movieInfoLine.trim();
-                if (movieInfoLine.isEmpty() || invalidLines.contains(lineNumber))
-                    continue;
+                 if (movieInfoLine.isEmpty() || invalidLines.contains(lineNumber))
+                     continue;
                 
                 if (!movieInfoLine.contains(",")) {
                     // Bad formatting – you might log an error and then skip the record
@@ -83,6 +83,7 @@ public class RecommendationSystem {
                 if (error.equals("")) {
                     error = validator.checkMovieId(id, title);
                 }
+
                 if (!error.equals("")) {
                     // (Optional) Log the error message for this movie.
                     // Do not add an invalid movie to the maps.

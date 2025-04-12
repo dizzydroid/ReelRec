@@ -17,6 +17,6 @@ Drama, Romance
 The Lion King, TLK010
 Animation, Family, Adventure
 Back To The Future, BTTF011
-Drama, Adventure
+Adventure
 Avengers Assemble, AVS013
 Action, Adventure, SciFi

@@ -1,0 +1,27 @@
+John Doe, 12345678X
+ERROR: Movie Id "TSR001" at line 2 is not in the movies file
+Gladiator, The Godfather, Pulp Fiction, Forrest Gump
+
+Jane Smith, 87654321Y
+The Dark Knight, Gladiator, Forrest Gump
+
+Alice Johnson, 1122334
+ERROR: User Id "1122334" is wrong at line 3 in the users file.
+No recommendations
+
+Bob Brown, 99887766W
+ERROR: Movie Id "AVS013" at line 8 is not in the movies file
+Gladiator, The Godfather, Pulp Fiction, Forrest Gump
+
+Charlie Black, 55443322V
+ERROR: Movie Id "TSR001" at line 10 is not in the movies file
+Gladiator, Forrest Gump
+
+Eric Green, 44332211T
+ERROR: Movie Id "TSR001" at line 12 is not in the movies file
+No recommendations
+
+Diana White, 66778899U
+ERROR: Movie Id "AA013" at line 14 is not in the movies file
+No recommendations
+

@@ -113,11 +113,11 @@ public class Validator {
                     movieId = parts[1].trim();
                     result = checkMovieTitle(movetitle);
                     if (!result.equals("")) {
-                        errors.add(result + " at line " + lineNumber);
+                        errors.add(result + " at line " + lineNumber + " in the movies file.");
                     } else {
                         result = checkMovieId(movieId, movetitle);
                         if (!result.equals("")) {
-                            errors.add(result + " at line " + lineNumber);
+                            errors.add(result + " at line " + lineNumber + " in the movies file.");
                         } else {
                             String numberPart = movieId.replaceAll("[^0-9]", "");
                             this.existingMovieIds.add(movieId);
@@ -125,7 +125,7 @@ public class Validator {
                         }
                     }
                 } else {
-                    errors.add("ERROR: Movie Formatting is wrong at line " + lineNumber);
+                    errors.add("ERROR: Movie Formatting is wrong at line " + lineNumber + " in the movies file.");
                 }
                 lineNumber++;
                 line = reader.readLine();
@@ -135,11 +135,11 @@ public class Validator {
                         genre = genre.trim();
                         result = checkMovieGenre(genre);
                         if (!result.equals("")) {
-                            errors.add(result + " at line " + lineNumber);
+                            errors.add(result + " at line " + lineNumber + " in the movies file.");
                         }
                     }
                 } else {
-                    errors.add("ERROR: Movie has no genres at line " + lineNumber);
+                    errors.add("ERROR: Movie has no genres at line " + lineNumber + " in the movies file.");
                 }
             }
 
@@ -170,17 +170,17 @@ public class Validator {
                     userId = parts[1].trim();
                     result = checkUserName(username);
                     if (!result.equals("")) {
-                        errors.add(result + " at line " + lineNumber);
+                        errors.add(result + " at line " + lineNumber + " in the users file.");
                     } else {
                         result = checkUserId(userId);
                         if (!result.equals("")) {
-                            errors.add(result + " at line " + lineNumber);
+                            errors.add(result + " at line " + lineNumber + " in the users file.");
                         } else {
                             this.existingUserIds.add(userId);
                         }
                     }
                 } else {
-                    errors.add("ERROR: User Formatting is wrong at line " + lineNumber);
+                    errors.add("ERROR: User Formatting is wrong at line " + lineNumber + " in the users file.");
                 }
                 lineNumber++;
                 line = reader.readLine();
@@ -194,7 +194,7 @@ public class Validator {
                         }
                     }
                 } else {
-                    errors.add("ERROR: User has no movies at line " + lineNumber);
+                    errors.add("ERROR: User has no movies at line " + lineNumber + " in the users file.");
                 }
             }
 
