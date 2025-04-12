@@ -34,14 +34,12 @@ public class Main {
         if (!movieValidationError.isEmpty()) {
             writeErrorToFile(recommendationsFilePath, movieValidationError.get(0));
             System.out.println("Error in movies file: " + movieValidationError);
-            return;
         }
 
         List<String> userValidationError = validator.parseAndValidateUsers(usersFilePath);       
         if (!userValidationError.isEmpty()) {
             writeErrorToFile(recommendationsFilePath, userValidationError.get(0));
             System.out.println("Error in users file: " + userValidationError);
-            return;
         }
 
         // Create RecommendationSystem and load movies/users

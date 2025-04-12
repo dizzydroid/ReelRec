@@ -8,6 +8,7 @@ public class User {
 
     private String name,id;
     private List<Movie> WatchList;
+    private String errorMessage = null;  // New field for validation errors
 
     public String getName() {
         return name;
@@ -44,5 +45,13 @@ public class User {
 
     }
 
+    
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+        
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
 }
