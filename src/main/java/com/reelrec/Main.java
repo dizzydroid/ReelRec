@@ -10,22 +10,19 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to ReelRec - the Movie Recommendation System");
 
-        if (args.length != 2) {
-            System.out.println("Usage: java MovieRecommendationSystem <movies_file> <users_file>");
-            return;
-        }
-
-        String moviesFilePath = args[0];
-        String usersFilePath = args[1];
-
-        if (moviesFilePath.isEmpty()) {
-            moviesFilePath = "src/main/resources/movies.txt";
-        }
-
-        if (usersFilePath.isEmpty()) {
-            usersFilePath = "src/main/resources/users.txt";
-        }
         
+        // String moviesFilePath = args[0];
+        // String usersFilePath = args[1];
+
+        // if (args.length != 2) {
+        //     System.out.println("Usage: java MovieRecommendationSystem <movies_file> <users_file>");
+        //     moviesFilePath = "src/main/resources/movies.txt";
+        //     usersFilePath = "src/main/resources/users.txt";
+        // }
+        
+        String moviesFilePath = "src/main/resources/movies.txt";
+        String usersFilePath = "src/main/resources/users.txt";
+
         String recommendationsFilePath = "src/main/resources/recommendations.txt";
 
         // Create validator and validate the files
@@ -54,9 +51,21 @@ public class Main {
             recSys.loadUsersFromFile(usersFilePath, invalidMovieLines);
         } catch(IOException e){
             writeErrorToFile(recommendationsFilePath, "ERROR: Could not load input files");
+            return;
         }
 
-        System.out.println("Recommendations have been generated in: " + recommendationsFilePath);
+         // For every user, write recommendations to the output file
+         List<User> users = recSys.getUsers();
+         for (User user : users) {
+             try {
+                 recSys.writeRecommendationsToFile(user, recommendationsFilePath);
+                 System.out.println("Recommendations generated for user" + user.getName());
+                 System.out.println("Loaded movie IDs: " + recSys.getMovieIdMap().keySet());
+                 System.out.println("User " + user.getName() + " watched genres: " + recSys.getUserCategories());
+             } catch (IOException e) {
+                 System.out.println("Error writing recommendations for user: " + user.getName());
+             }
+        }
     }
 
     

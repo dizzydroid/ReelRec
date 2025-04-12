@@ -9,6 +9,7 @@ public class RecommendationSystem {
     private TreeMap<String, List<Movie>> categoryMovies;
     private Map<String, Movie> movieIdMap;
     private List<User> users;
+    private List<String> userCategories; // To store user categories for debugging
 
 
     public RecommendationSystem() {
@@ -16,6 +17,7 @@ public class RecommendationSystem {
         this.categoryMovies = new TreeMap<>();
         this.movieIdMap = new HashMap<>();
         this.users = new ArrayList<>();
+        this.userCategories = new ArrayList<>(); 
     }
     
     public RecommendationSystem(TreeMap<Movie, List<String>> movieCategories, 
@@ -38,6 +40,10 @@ public class RecommendationSystem {
     public Movie getMovieById(String id) {
         return movieIdMap.get(id);
     }
+
+    public Map<String, Movie> getMovieIdMap() {
+        return movieIdMap;
+    }
     
     public List<Movie> getMoviesByCategory(String category) {
         List<Movie> result = new ArrayList<>();
@@ -57,46 +63,49 @@ public class RecommendationSystem {
      */
     public void loadMoviesFromFile(String filePath, ArrayList<Integer> invalidLines) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            Movie currentMovie = null;
             int lineNumber = 0;
-            
-            while ((line = reader.readLine()) != null) {
-
-                lineNumber += 1;
-
-                line = line.trim();
+            String movieInfoLine;
+            while ((movieInfoLine = reader.readLine()) != null) {
+                lineNumber++;
+                movieInfoLine = movieInfoLine.trim();
+                if (movieInfoLine.isEmpty() || invalidLines.contains(lineNumber))
+                    continue;
                 
-                if (line.isEmpty() || invalidLines.contains(lineNumber)) continue;
+                // This is the movie info line (title and ID)
+                if (!movieInfoLine.contains(",")) {
+                    // Handle bad formatting if needed
+                    continue;
+                }
+                String[] parts = movieInfoLine.split(",", 2);
+                String title = parts[0].trim();
+                String id = parts[1].trim();
                 
-                if (line.contains(",")) {
-                    // This is a movie title and ID line
-                    String[] parts = line.split(",", 2);
-                    String title = parts[0].trim();
-                    String id = parts[1].trim();
-                    
-                    currentMovie = new Movie(title, id);
-                    movieIdMap.put(id, currentMovie);
-                    movieCategories.put(currentMovie, new ArrayList<>());
-                } else if (currentMovie != null) {
-                    // This is a categories line
-                    String[] categories = line.split(",");
-                    for (String category : categories) {
-                        category = category.trim();
+                // Construct Movie with correct parameter order: (id, title)
+                Movie currentMovie = new Movie(id, title);
+                movieIdMap.put(id, currentMovie);
+                movieCategories.put(currentMovie, new ArrayList<>());
+                
+                // Immediately read the next line for genres
+                String genresLine = reader.readLine();
+                lineNumber++;
+                if (genresLine != null && !genresLine.trim().isEmpty() && !invalidLines.contains(lineNumber)) {
+                    String[] genres = genresLine.split(",");
+                    for (String genre : genres) {
+                        genre = genre.trim();
+                        // Add genre to this movie
+                        movieCategories.get(currentMovie).add(genre);
                         
-                        // Add category to movie
-                        movieCategories.get(currentMovie).add(category);
-                        
-                        // Add movie to category
-                        if (!categoryMovies.containsKey(category)) {
-                            categoryMovies.put(category, new ArrayList<>());
+                        // Add this movie to the corresponding category in the map
+                        if (!categoryMovies.containsKey(genre)) {
+                            categoryMovies.put(genre, new ArrayList<>());
                         }
-                        categoryMovies.get(category).add(currentMovie);
+                        categoryMovies.get(genre).add(currentMovie);
                     }
                 }
             }
         }
     }
+    
     
     /**
      * Loads user data from a text file.
@@ -104,27 +113,36 @@ public class RecommendationSystem {
      */
     public void loadUsersFromFile(String filePath, ArrayList<Integer> invalidLines) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            User currentUser = null;
+            String userInfoLine;
             int lineNumber = 0;
             
-            while ((line = reader.readLine()) != null) {
-                lineNumber += 1;
-                line = line.trim();
-
-                if (line.isEmpty() || invalidLines.contains(lineNumber)) continue;
+            while ((userInfoLine = reader.readLine()) != null) {
+                lineNumber++;
+                userInfoLine = userInfoLine.trim();
+                if (userInfoLine.isEmpty() || invalidLines.contains(lineNumber))
+                    continue;
                 
-                if (line.contains(",")) {
-                    // This is a user name and ID line
-                    String[] parts = line.split(",", 2);
-                    String name = parts[0].trim();
-                    String id = parts[1].trim();
-                    
-                    currentUser = new User(name, id);
-                    users.add(currentUser);  // Add user to the users list
-                } else if (currentUser != null) {
-                    // This is a watched movies line
-                    String[] movieIds = line.split(",");
+                // Parse the user info line (Name, UserID)
+                String[] parts = userInfoLine.split(",", 2);
+                if(parts.length != 2) {
+                    // Log or skip improperly formatted line
+                    continue;
+                }
+                String name = parts[0].trim();
+                String id = parts[1].trim();
+                User currentUser = new User(name, id);
+                users.add(currentUser);
+
+                System.out.println("User " + currentUser.getName() + " watch list: ");
+                for (Movie m : currentUser.getWatchList()) {
+                    System.out.println(" - " + m.getID() + ": " + m.getName());
+                }
+    
+                // Read the next line for movie IDs (watch list)
+                String moviesLine = reader.readLine();
+                lineNumber++;
+                if (moviesLine != null && !moviesLine.trim().isEmpty() && !invalidLines.contains(lineNumber)) {
+                    String[] movieIds = moviesLine.split(",");
                     for (String movieId : movieIds) {
                         movieId = movieId.trim();
                         Movie movie = movieIdMap.get(movieId);
@@ -136,6 +154,7 @@ public class RecommendationSystem {
             }
         }
     }
+          
     
     /**
      * Writes recommendations for a user to a file.
@@ -176,16 +195,25 @@ public class RecommendationSystem {
         }
         
         // Find categories the user has watched
-        List<String> userCategories = new ArrayList<>();
+        userCategories.clear();
         for (Movie movie : user.getWatchList()) {
-            List<String> categories = movieCategories.get(movie);
-            if (categories != null) {
-                for (String category : categories) {
+            List<String> genresForMovie = movieCategories.get(movie);
+            System.out.println("For user " + user.getName() + ", movie " + movie.getID() + " genres: " + genresForMovie);
+            if (genresForMovie != null) {
+                for (String category : genresForMovie) {
                     if (!userCategories.contains(category)) {
                         userCategories.add(category);
                     }
                 }
             }
+            // List<String> categories = movieCategories.get(movie);
+            // if (categories != null) {
+            //     for (String category : categories) {
+            //         if (!userCategories.contains(category)) {
+            //             userCategories.add(category);
+            //         }
+            //     }
+            // }
         }
         
         // Create a list of movies the user has already watched
@@ -204,6 +232,10 @@ public class RecommendationSystem {
         }
         
         return recommendations;
+    }
+
+    public List<String> getUserCategories() {
+        return new ArrayList<>(userCategories); // Return a copy to avoid external modification
     }
 
     /**

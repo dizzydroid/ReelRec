@@ -90,6 +90,17 @@ public class Validator {
 
     // Parses and validates movies from a file, returns a list of errors (if empty
     // then no errors)
+    public boolean isFileRead(String filepath){
+       try {
+        BufferedReader reader = new BufferedReader(new FileReader(filepath));
+        return true;
+    } catch(IOException e) {
+        e.printStackTrace();
+        return false;
+    }
+
+    }
+
     public List<String> parseAndValidateMovies(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             int lineNumber = 1;
