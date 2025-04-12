@@ -102,7 +102,7 @@ public class Validator {
 
     public List<String> parseAndValidateMovies(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int lineNumber = 1;
+            int lineNumber = 0;
             String line;
             String movetitle, movieId, result;
             List<String> errors = new ArrayList<>();
@@ -159,7 +159,7 @@ public class Validator {
     // existingMovieIds
     public List<String> parseAndValidateUsers(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int lineNumber = 1;
+            int lineNumber = 0;
             String line;
             String username, userId, result;
             List<String> errors = new ArrayList<>();
