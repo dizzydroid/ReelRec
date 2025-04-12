@@ -94,9 +94,11 @@ public class Validator {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             int lineNumber = 0;
             String line;
-            String movetitle, movieId, result;
+            String movetitle, movieId = null, result;
+            boolean validId;
             List<String> errors = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
+                validId = false;
                 lineNumber++;
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
@@ -110,9 +112,7 @@ public class Validator {
                         if (!result.equals("")) {
                             errors.add(result + " at line " + lineNumber);
                         } else {
-                            String numberPart = movieId.replaceAll("[^0-9]", "");
-                            this.existingMovieIds.add(movieId);
-                            this.existingMovieIdNumbers.add(numberPart);
+                            validId = true;
                         }
                     }
                 } else {
@@ -131,6 +131,11 @@ public class Validator {
                     }
                 } else {
                     errors.add("ERROR: Movie has no genres at line " + lineNumber);
+                }
+                if(validId){
+                    String numberPart = movieId.replaceAll("[^0-9]", "");
+                    this.existingMovieIds.add(movieId);
+                    this.existingMovieIdNumbers.add(numberPart);
                 }
             }
 
@@ -152,9 +157,11 @@ public class Validator {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             int lineNumber = 0;
             String line;
-            String username, userId, result;
+            String username, userId = null, result;
             List<String> errors = new ArrayList<>();
+            boolean validId;
             while ((line = reader.readLine()) != null) {
+                validId = false;
                 lineNumber++;
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
@@ -168,7 +175,7 @@ public class Validator {
                         if (!result.equals("")) {
                             errors.add(result + " at line " + lineNumber);
                         } else {
-                            this.existingUserIds.add(userId);
+                            validId = true;
                         }
                     }
                 } else {
@@ -188,6 +195,10 @@ public class Validator {
                 } else {
                     errors.add("ERROR: User has no movies at line " + lineNumber);
                 }
+                if(validId){
+                    this.existingUserIds.add(userId);
+                }
+                
             }
 
             return errors;

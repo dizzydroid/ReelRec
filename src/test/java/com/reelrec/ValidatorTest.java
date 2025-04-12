@@ -330,11 +330,10 @@ public class ValidatorTest {
         List<String> expectedErrors = List.of(
             "ERROR: Movie Title \"The Shawshank redemption\" is wrong at line 1", // Wrong title
             "ERROR: Movie Id letters \"TR002\" are wrong at line 3",              // Wrong letters in ID
-            "ERROR: Movie genre \"Crimea\" is not supported at line 5",           // Wrong genre
-            "ERROR: Movie has no genres at line 7",                               // No genres
-            "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format
-            "ERROR: Movie Title \"WALL-E\" is wrong at line 11",                  // Wrong title
-            "ERROR: Movie Id format \"walle\" is wrong at line 11",               // Wrong ID format
+            "ERROR: Movie genre \"Crimea\" is not supported at line 6",           // Wrong genre
+            "ERROR: Movie has no genres at line 8",                               // No genres
+            "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format 
+            "ERROR: Movie Id format \"SMATV0046\" is wrong at line 11",           // Wrong title
             "ERROR: Movie genre \"Familia\" is not supported at line 12"          // Wrong genre
         );
 
