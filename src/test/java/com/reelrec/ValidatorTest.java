@@ -287,7 +287,7 @@ public class ValidatorTest {
 
     @Test
     public void testParseAndValidateMovies_ValidFile() {
-        String filepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longermovieswithnoerrors.txt";
+        String filepath = "src/main/resources/Testing/longermovieswithnoerrors.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid movies file");
     }
@@ -295,17 +295,17 @@ public class ValidatorTest {
     @Test
     public void testParseAndValidateUsers_ValidFile() {
         // Ensure movies are validated first to populate existingMovieIds
-        String moviesFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longermovieswithnoerrors.txt";
+        String moviesFilepath = "src/main/resources/Testing/longermovieswithnoerrors.txt";
         validator.parseAndValidateMovies(moviesFilepath);
 
-        String usersFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longeruserswithnoerrors.txt";
+        String usersFilepath = "src/main/resources/Testing/longeruserswithnoerrors.txt";
         List<String> errors = validator.parseAndValidateUsers(usersFilepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid users file");
     }
 
     @Test
     public void testParseAndValidateMovies_ShortFile() {
-        String filepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\movies.txt";
+        String filepath = "src/main/resources/movies.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid short movies file");
     }
@@ -313,17 +313,17 @@ public class ValidatorTest {
     @Test
     public void testParseAndValidateUsers_ShortFile() {
         // Ensure movies are validated first to populate existingMovieIds
-        String moviesFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\movies.txt";
+        String moviesFilepath = "src/main/resources/movies.txt";
         validator.parseAndValidateMovies(moviesFilepath);
 
-        String usersFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\users.txt";
+        String usersFilepath = "src/main/resources/users.txt";
         List<String> errors = validator.parseAndValidateUsers(usersFilepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid short users file");
     }
 
     @Test
     public void testParseAndValidateMovies_inValidFile() {
-        String filepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longermovieswitherrors.txt";
+        String filepath = "src/main/resources/Testing/longermovieswitherrors.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
 
         // Expected errors based on the issues in the file
@@ -339,7 +339,7 @@ public class ValidatorTest {
         );
 
         if (!errors.isEmpty()) {
-            System.out.println("Errors found in testParseAndValidateMovies_ValidFile:");
+            System.out.println("Errors found in testParseAndValidateMovies_inValidFile:");
             errors.forEach(System.out::println);
         }
 
