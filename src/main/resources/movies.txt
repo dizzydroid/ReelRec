@@ -4,3 +4,19 @@ The Godfather, TG002
 Crime, Drama
 The Dark Knight, TDK003
 Action, Crime, Drama
+Pulp Fiction, PF004
+Crime, Drama
+Inception, I005
+Action, SciFi, Thriller
+The Matrix, TM007
+Action, SciFi
+Gladiator, G008
+Action, Drama
+Forrest Gump, FG009
+Drama, Romance
+The Lion King, TLK010
+Animation, Family, Adventure
+Back To The Future, BTTF011
+Drama, Adventure
+Avengers Assemble, AVS013
+Action, Adventure, SciFi

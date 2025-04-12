@@ -75,8 +75,7 @@ public class Validator {
         return "";
     }
 
-    // Validates user ID (9 alphanumeric characters, starts with digits, may end
-    // with one letter)
+    // Validates user ID (9 characters, first 8 must be digits, last can be digit or letter)
     String checkUserId(String userId) {
         if (userId.matches("^\\d{8}[A-Za-z0-9]$")) {
             if (!this.existingUserIds.contains(userId)) {
@@ -223,5 +222,9 @@ public class Validator {
             }
         }
         return new ArrayList<>(errorLines);
+    }
+
+    public Set<String> getValidMovieIds() {
+        return existingMovieIds;
     }
 }

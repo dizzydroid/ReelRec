@@ -125,8 +125,8 @@ public class RecommendationSystem {
      * Loads user data from a text file.
      * Format: "Username, UserID" followed by watched movie IDs on next line
      */
-    public void loadUsersFromFile(String filePath, ArrayList<Integer> invalidLines) throws IOException {
-        Validator validator = new Validator(); // new validator (or reuse one if available)
+    public void loadUsersFromFile(String filePath, ArrayList<Integer> invalidLines, Set<String> validMovieIds) throws IOException {
+        // Do not create a new Validator here – assume validation was already done in Main.
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String userInfoLine;
             int lineNumber = 0;
@@ -134,62 +134,67 @@ public class RecommendationSystem {
             while ((userInfoLine = reader.readLine()) != null) {
                 lineNumber++;
                 userInfoLine = userInfoLine.trim();
+                // Skip empty lines or lines flagged as invalid by the validator
                 if (userInfoLine.isEmpty() || invalidLines.contains(lineNumber))
                     continue;
                 
                 String[] parts = userInfoLine.split(",", 2);
+                User currentUser;
                 if (parts.length != 2) {
-                    // If formatting is wrong, create a dummy user with error.
-                    User errorUser = new User("Unknown", "Unknown");
-                    errorUser.setErrorMessage("ERROR: User Formatting is wrong at line " + lineNumber);
-                    users.add(errorUser);
-                    // Skip the next line because it should be the watch list.
+                    // Create a dummy user with an error message for a formatting error
+                    currentUser = new User("Unknown", "Unknown");
+                    currentUser.setErrorMessage("ERROR: User Formatting is wrong at line " + lineNumber);
+                    users.add(currentUser);
+                    // Consume the next line, which should be the watch list, and increment line number.
                     reader.readLine();
                     lineNumber++;
                     continue;
                 }
                 String name = parts[0].trim();
                 String id = parts[1].trim();
-                String error = validator.checkUserName(name);
-                if (error.equals("")) {
-                    error = validator.checkUserId(id);
-                }
-                User currentUser = new User(name, id);
-                if (!error.equals("")) {
-                    // Mark user as having an error.
-                    currentUser.setErrorMessage(error + " at line " + lineNumber);
-                    // Even if the watchlist line is present, we mark this user as invalid.
-                    // But still consume the next line.
-                    reader.readLine();
-                    lineNumber++;
-                    users.add(currentUser);
-                    continue;
-                }
+                currentUser = new User(name, id);
                 
-                // Read the next line for watched movies
+                // Read the next line for the watch list
                 String moviesLine = reader.readLine();
                 lineNumber++;
-                if (moviesLine != null && !moviesLine.trim().isEmpty() && !invalidLines.contains(lineNumber)) {
+                if (moviesLine == null || moviesLine.trim().isEmpty() || invalidLines.contains(lineNumber)) {
+                    currentUser.setErrorMessage("ERROR: User has no movies at line " + lineNumber);
+                } else {
                     String[] movieIds = moviesLine.split(",");
+                    boolean hasValidMovies = false;
+                    boolean hasInvalidMovies = false;
+                    String lastInvalidMovieId = "";
+                    int lastInvalidLineNumber = 0;
+                    
                     for (String movieId : movieIds) {
                         movieId = movieId.trim();
-                        // If the movie is not found (because it might have been invalid), record an error.
-                        if (!movieIdMap.containsKey(movieId)) {
-                            currentUser.setErrorMessage("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber + " is not in the movies file");
-                            // Optionally, break out after the first error.
-                            break;
+                        if (!validMovieIds.contains(movieId)) {
+                            hasInvalidMovies = true;
+                            lastInvalidMovieId = movieId;
+                            lastInvalidLineNumber = lineNumber;
+                            // Don't break here, continue processing other movie IDs
                         } else {
                             currentUser.addToWatchList(movieIdMap.get(movieId));
+                            hasValidMovies = true;
                         }
                     }
-                } else {
-                    // No movies provided
-                    currentUser.setErrorMessage("ERROR: User has no movies at line " + lineNumber);
+                    
+                    // Set error message only if there were invalid movies and record the last one found
+                    if (hasInvalidMovies) {
+                        currentUser.setErrorMessage("ERROR: Movie Id \"" + lastInvalidMovieId + "\" at line " + lastInvalidLineNumber + " is not in the movies file");
+                    }
+                    
+                    // If no valid movies were found, clear the watchlist to ensure no recommendations
+                    if (!hasValidMovies && hasInvalidMovies) {
+                        currentUser.clearWatchList();
+                    }
                 }
+                // Always add the user record—even if it has an error message.
                 users.add(currentUser);
             }
         }
     }
+    
     
     /**
      * Writes recommendations for a user to a file.
@@ -197,30 +202,34 @@ public class RecommendationSystem {
      */
     public void writeRecommendationsToFile(User user, String outputPath) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath, true))) {
-            // Write user name and ID (always output in first line)
+            // Write user info
             writer.write(user.getName() + ", " + user.getId());
             writer.newLine();
             
+            // If the user has an error message, output that first
             if (user.getErrorMessage() != null) {
-                // Write the error message in place of recommendations.
                 writer.write(user.getErrorMessage());
-            } else {
-                // Generate recommendations as before.
-                List<Movie> recommendations = recommendMoviesForUser(user);
-                if (!recommendations.isEmpty()) {
-                    StringJoiner joiner = new StringJoiner(", ");
-                    for (Movie movie : recommendations) {
-                        joiner.add(movie.getName());
-                    }
-                    writer.write(joiner.toString());
-                } else {
-                    writer.write("No recommendations");
-                }
+                writer.newLine();
             }
+            
+            // Generate recommendations regardless of errors
+            List<Movie> recommendations = recommendMoviesForUser(user);
+            if (!recommendations.isEmpty()) {
+                StringJoiner joiner = new StringJoiner(", ");
+                for (Movie movie : recommendations) {
+                    joiner.add(movie.getName());
+                }
+                writer.write(joiner.toString());
+            } else {
+                writer.write("No recommendations");
+            }
+            
+            // Separate records with blank lines.
             writer.newLine();
-            writer.newLine(); // Blank line between user records
+            writer.newLine();
         }
-    }    
+    }
+    
     
     /**
      * Recommends movies based on a user's watch history.
@@ -236,8 +245,12 @@ public class RecommendationSystem {
         // Find categories the user has watched
         userCategories.clear();
         for (Movie movie : user.getWatchList()) {
+            // Skip null movies or movies not in movieCategories map
+            if (movie == null || !movieCategories.containsKey(movie)) {
+                continue;
+            }
+            
             List<String> genresForMovie = movieCategories.get(movie);
-            System.out.println("For user " + user.getName() + ", movie " + movie.getID() + " genres: " + genresForMovie);
             if (genresForMovie != null) {
                 for (String category : genresForMovie) {
                     if (!userCategories.contains(category)) {
@@ -245,14 +258,11 @@ public class RecommendationSystem {
                     }
                 }
             }
-            // List<String> categories = movieCategories.get(movie);
-            // if (categories != null) {
-            //     for (String category : categories) {
-            //         if (!userCategories.contains(category)) {
-            //             userCategories.add(category);
-            //         }
-            //     }
-            // }
+        }
+        
+        // Return empty list if no valid categories found
+        if (userCategories.isEmpty()) {
+            return recommendations;
         }
         
         // Create a list of movies the user has already watched

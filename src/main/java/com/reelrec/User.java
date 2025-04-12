@@ -42,9 +42,11 @@ public class User {
 
     public void addToWatchList(Movie movie) {
         WatchList.add(movie);
-
     }
 
+    public void clearWatchList() {
+        WatchList.clear();
+    }
     
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
