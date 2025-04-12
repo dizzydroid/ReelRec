@@ -1,19 +1,20 @@
 package com.reelrec;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ValidatorTest {
+    
+    private Validator validator;
 
-    private static Validator validator;
-
-    @BeforeAll
-    public static void setUp() {
-        validator = new Validator();
+    @BeforeEach
+    public void setUp() {
+        validator = new Validator(); // Initialize the class-level validator object
     }
 
     @Test
@@ -284,4 +285,64 @@ public class ValidatorTest {
         assertEquals("ERROR: User Id \"\" is wrong", result);
     }
 
+    @Test
+    public void testParseAndValidateMovies_ValidFile() {
+        String filepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longermovieswithnoerrors.txt";
+        List<String> errors = validator.parseAndValidateMovies(filepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid movies file");
+    }
+
+    @Test
+    public void testParseAndValidateUsers_ValidFile() {
+        // Ensure movies are validated first to populate existingMovieIds
+        String moviesFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longermovieswithnoerrors.txt";
+        validator.parseAndValidateMovies(moviesFilepath);
+
+        String usersFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longeruserswithnoerrors.txt";
+        List<String> errors = validator.parseAndValidateUsers(usersFilepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid users file");
+    }
+
+    @Test
+    public void testParseAndValidateMovies_ShortFile() {
+        String filepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\movies.txt";
+        List<String> errors = validator.parseAndValidateMovies(filepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid short movies file");
+    }
+
+    @Test
+    public void testParseAndValidateUsers_ShortFile() {
+        // Ensure movies are validated first to populate existingMovieIds
+        String moviesFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\movies.txt";
+        validator.parseAndValidateMovies(moviesFilepath);
+
+        String usersFilepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\users.txt";
+        List<String> errors = validator.parseAndValidateUsers(usersFilepath);
+        assertTrue(errors.isEmpty(), "Expected no errors for a valid short users file");
+    }
+
+    @Test
+    public void testParseAndValidateMovies_inValidFile() {
+        String filepath = "d:\\College\\8th Semester\\Software Testing (CSE337s)\\Project\\ReelRec\\src\\main\\resources\\Testing\\longermovieswitherrors.txt";
+        List<String> errors = validator.parseAndValidateMovies(filepath);
+
+        // Expected errors based on the issues in the file
+        List<String> expectedErrors = List.of(
+            "ERROR: Movie Title \"The Shawshank redemption\" is wrong at line 1", // Wrong title
+            "ERROR: Movie Id letters \"TR002\" are wrong at line 3",              // Wrong letters in ID
+            "ERROR: Movie genre \"Crimea\" is not supported at line 5",           // Wrong genre
+            "ERROR: Movie has no genres at line 7",                               // No genres
+            "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format
+            "ERROR: Movie Title \"WALL-E\" is wrong at line 11",                  // Wrong title
+            "ERROR: Movie Id format \"walle\" is wrong at line 11",               // Wrong ID format
+            "ERROR: Movie genre \"Familia\" is not supported at line 12"          // Wrong genre
+        );
+
+        if (!errors.isEmpty()) {
+            System.out.println("Errors found in testParseAndValidateMovies_ValidFile:");
+            errors.forEach(System.out::println);
+        }
+
+        assertEquals(expectedErrors, errors, "The errors do not match the expected ones.");
+    }
 }

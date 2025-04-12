@@ -92,11 +92,12 @@ public class Validator {
     // then no errors)
     public List<String> parseAndValidateMovies(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int lineNumber = 1;
+            int lineNumber = 0;
             String line;
             String movetitle, movieId, result;
             List<String> errors = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
                     movetitle = parts[0].trim();
@@ -117,8 +118,8 @@ public class Validator {
                 } else {
                     errors.add("ERROR: Movie Formatting is wrong at line " + lineNumber);
                 }
-                lineNumber++;
                 line = reader.readLine();
+                lineNumber++;
                 if (!line.isEmpty()) {
                     parts = line.split(",");
                     for (String genre : parts) {
@@ -149,11 +150,12 @@ public class Validator {
     // existingMovieIds
     public List<String> parseAndValidateUsers(String filepath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int lineNumber = 1;
+            int lineNumber = 0;
             String line;
             String username, userId, result;
             List<String> errors = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
                     username = parts[0].trim();
@@ -172,8 +174,8 @@ public class Validator {
                 } else {
                     errors.add("ERROR: User Formatting is wrong at line " + lineNumber);
                 }
-                lineNumber++;
                 line = reader.readLine();
+                lineNumber++;
                 if (!line.isEmpty()) {
                     parts = line.split(",");
                     for (String movieId : parts) {
