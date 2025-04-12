@@ -25,6 +25,7 @@ public class RecommendationSystem {
         this.categoryMovies = categoryMovies;
         this.movieIdMap = new HashMap<>();
         this.users = new ArrayList<>();
+        this.userCategories = new ArrayList<>();
         
         // Populate movieIdMap for existing movies
         for (Movie movie : movieCategories.keySet()) {

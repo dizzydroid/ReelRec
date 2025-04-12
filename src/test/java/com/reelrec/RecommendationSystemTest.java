@@ -4,8 +4,12 @@ import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -94,11 +98,49 @@ public class RecommendationSystemTest {
     }
     
     @Test
+    // recommending movies based on a user's watching history
     public void testRecommendMoviesForUser() {
-        //TODO
+        //Test user with movie1 in watch history (Action, Drama)
+        List<Movie> recommendations = recommendationSystem.recommendMoviesForUser(testUser);
+
+        // Check that we got recommendations (movie2, movie3, movie4) without the watched one (movie1)
+        assertAll(
+                () -> assertFalse(recommendations.isEmpty(), "Should return recommendations"),
+                () -> assertFalse(recommendations.contains(movie1), "Shouln't recommend watched movies"),
+                () -> assertTrue(recommendations.contains(movie2), "Should contain movie2 (Comedy, Drama)"),
+                () -> assertTrue(recommendations.contains(movie3), "Should contain movie3 (Action, Thriller)"),
+                () -> assertTrue(recommendations.contains(movie4), "Should contain movie4 (Drama, Romance)"),
+                () -> assertFalse(recommendations.contains(movie5), "Shouldn't recomment movie5 (Comedy, Family)")
+        );
+
+        // Test with multiple movies in watch history
+        User multiMovieUser = new User("Multi Movie User", "MULTI002");
+        multiMovieUser.addToWatchList(movie1);  // Action, Drama
+        multiMovieUser.addToWatchList(movie2);  // Comedy, Drama
+
+        List<Movie> multiMovieRecommendations = recommendationSystem.recommendMoviesForUser(multiMovieUser);
+
+        // Check that we got recommendations (movie3, movie4, movie5) without the watched ones (movie1, movie2)
+        assertAll(
+                () -> assertFalse(multiMovieRecommendations.isEmpty(), "Should return recommendations"),
+                () -> assertFalse(multiMovieRecommendations.contains(movie1), "Shouldn't recommend watched movies"),
+                () -> assertFalse(multiMovieRecommendations.contains(movie2), "Shouldn't recommend watched movies"),
+                () -> assertTrue(multiMovieRecommendations.contains(movie3), "Should contain movie3 (Action, Thriller)"),
+                () -> assertTrue(multiMovieRecommendations.contains(movie4), "Should contain movie4 (Drama, Romance)"),
+                () -> assertTrue(multiMovieRecommendations.contains(movie5), "Should contain movie5 (Comedy, Family)")
+        );
+
+        // Verify User categories are updated correctly
+        List<String> userCategories = recommendationSystem.getUserCategories();
+        assertAll(
+                () -> assertTrue(userCategories.contains("Action"), "Should contain Action category"),
+                () -> assertTrue(userCategories.contains("Drama"), "Should contain Drama category"),
+                () -> assertTrue(userCategories.contains("Comedy"), "Should contain Comedy category")
+        );
     }
     
     @Test
+    // finding movies similar to a given reference movie
     public void testRecommendSimilarMovies() {
         // movie1 is Action, Drama
         List<Movie> similarMovies = recommendationSystem.recommendSimilarMovies(movie1);
@@ -127,6 +169,7 @@ public class RecommendationSystemTest {
     }
     
     @Test
+    // getting movies with the specified category
     public void testGetMoviesByCategory() {
         // Test getting action movies
         List<Movie> actionMovies = recommendationSystem.getMoviesByCategory("Action");
@@ -176,6 +219,114 @@ public class RecommendationSystemTest {
 
     @Test
     public void testWriteRecommendationsToFile() throws IOException {
-        // TODO
+        // Create a temporary file for testing
+        String tempFilePath = "src/test/resources/temp_recommendations.txt";
+        
+        // Ensure the directory exists
+        Files.createDirectories(Paths.get("src/test/resources"));
+        
+        // Remove file if it already exists
+        File tempFile = new File(tempFilePath);
+        if (tempFile.exists()) {
+            tempFile.delete();
+        }
+        
+        // Test writing recommendations for a user without errors
+        User regularUser = new User("Regular User", "REG001");
+        regularUser.addToWatchList(movie1);
+        recommendationSystem.getUsers().add(regularUser);
+        
+        recommendationSystem.writeRecommendationsToFile(regularUser, tempFilePath);
+        
+        // Verify file contents
+        String content1 = new String(Files.readAllBytes(Paths.get(tempFilePath)));
+        assertAll(
+            () -> assertTrue(content1.contains("Regular User, REG001"), "Should contain user info"),
+            () -> assertFalse(content1.contains("No recommendations"), "Should have recommendations")
+        );
+        
+        // Test writing for a user with an error message
+        User userWithError = new User("Error User", "ERR001");
+        userWithError.setErrorMessage("ERROR: Test error message");
+        recommendationSystem.getUsers().add(userWithError);
+        
+        recommendationSystem.writeRecommendationsToFile(userWithError, tempFilePath);
+        
+        // Verify file contents again (file should have both users now)
+        String content2 = new String(Files.readAllBytes(Paths.get(tempFilePath)));
+        assertAll(
+            () -> assertTrue(content2.contains("Error User, ERR001"), "Should contain error user info"),
+            () -> assertTrue(content2.contains("ERROR: Test error message"), "Should contain error message"),
+            () -> assertTrue(content2.contains("No recommendations"), "Should have no recommendations for error user")
+        );
+        
+        // Clean up
+        tempFile.delete();
+    }
+
+    @Test
+    public void testLoadMoviesFromFile() throws IOException {
+        // Create a temporary test movie file
+        String tempMovieFilePath = "src/test/resources/test_movies.txt";
+        Files.write(Paths.get(tempMovieFilePath), 
+                    Arrays.asList("Test Movie, TM001", "Action, Drama", 
+                                "Another Movie, AM002", "Comedy"),
+                    StandardOpenOption.CREATE);
+        
+        // Load movies from the test file
+        RecommendationSystem testSystem = new RecommendationSystem();
+        testSystem.loadMoviesFromFile(tempMovieFilePath, new ArrayList<>());
+        
+        // Verify movies were loaded correctly
+        assertEquals(2, testSystem.getMovieIdMap().size(), "Should load 2 movies");
+        assertNotNull(testSystem.getMovieById("TM001"), "Should contain movie with ID TM001");
+        assertNotNull(testSystem.getMovieById("AM002"), "Should contain movie with ID AM002");
+        
+        // Verify categories were loaded correctly
+        assertFalse(testSystem.getMoviesByCategory("Action").isEmpty(), "Should have Action category");
+        assertEquals(1, testSystem.getMoviesByCategory("Comedy").size(), "Should have 1 Comedy movie");
+        
+        // Clean up
+        Files.delete(Paths.get(tempMovieFilePath));
+    }
+
+    @Test
+    // Tests file I/O and data parsing
+    public void testLoadUsersFromFile() throws IOException {
+        // Set up movie data first
+        String tempMovieFilePath = "src/test/resources/test_movies.txt";
+        Files.write(Paths.get(tempMovieFilePath), 
+                    Arrays.asList("Test Movie, TM001", "Action, Drama", 
+                                "Another Movie, AM002", "Comedy"),
+                    StandardOpenOption.CREATE);
+        
+        // Create a test user file
+        String tempUserFilePath = "src/test/resources/test_users.txt";
+        Files.write(Paths.get(tempUserFilePath), 
+                    Arrays.asList("Test User, 12345678X", "TM001, AM002",
+                                "Another User, 87654321Y", "TM001"),
+                    StandardOpenOption.CREATE);
+        
+        // Create validator to get valid movie IDs
+        Validator validator = new Validator();
+        validator.parseAndValidateMovies(tempMovieFilePath);
+        Set<String> validMovieIds = validator.getValidMovieIds();
+        
+        // Load movies and users
+        RecommendationSystem testSystem = new RecommendationSystem();
+        testSystem.loadMoviesFromFile(tempMovieFilePath, new ArrayList<>());
+        testSystem.loadUsersFromFile(tempUserFilePath, new ArrayList<>(), validMovieIds);
+        
+        // Verify users were loaded
+        List<User> users = testSystem.getUsers();
+        assertEquals(2, users.size(), "Should load 2 users");
+        
+        // Verify watch lists were populated
+        User firstUser = users.get(0);
+        assertEquals(2, firstUser.getWatchList().size(), "First user should have 2 movies in watchlist");
+        
+        // Clean up
+        Files.delete(Paths.get(tempMovieFilePath));
+        Files.delete(Paths.get(tempUserFilePath));
     }
 }
