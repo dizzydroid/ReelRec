@@ -2,8 +2,6 @@ package com.reelrec;
 
 import java.util.List;
 
-import java.util.Scanner;
-
 public class User {
 
     private String name,id;

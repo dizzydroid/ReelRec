@@ -49,7 +49,7 @@ public class Main {
 
         // Validate users
         List<String> userValidationErrors = validator.parseAndValidateUsers(usersFilePath);
-        ArrayList<Integer> invalidUserLines = validator.extractErrorLines(userValidationErrors);
+        // ArrayList<Integer> invalidUserLines = validator.extractErrorLines(userValidationErrors);
         
         // Create a map to store user ID errors
         Map<String, String> userIdErrors = new HashMap<>();

@@ -326,7 +326,7 @@ public class RecommendationSystemTest {
         assertEquals(2, firstUser.getWatchList().size(), "First user should have 2 movies in watchlist");
         
         // Clean up
-        Files.delete(Paths.get(tempMovieFilePath));
-        Files.delete(Paths.get(tempUserFilePath));
+        // Files.delete(Paths.get(tempMovieFilePath));
+        // Files.delete(Paths.get(tempUserFilePath));
     }
 }
