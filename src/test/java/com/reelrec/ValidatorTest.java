@@ -334,7 +334,10 @@ public class ValidatorTest {
             "ERROR: Movie has no genres at line 8",                               // No genres
             "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format 
             "ERROR: Movie Id format \"SMATV0046\" is wrong at line 11",           // Wrong title
-            "ERROR: Movie genre \"Familia\" is not supported at line 12"          // Wrong genre
+            "ERROR: Movie genre \"Familia\" is not supported at line 12",         // Wrong genre
+            "ERROR: Movie Id numbers \"TKS003\" aren't unique at line 13",        // non unique ID numbers
+            "ERROR: Movie Title \"\" is wrong at line 15",                        // Empty title
+            "ERROR: Movie Title \"1917\" is wrong at line 19"                    // Title with numbers
         );
 
         if (!errors.isEmpty()) {
@@ -342,6 +345,28 @@ public class ValidatorTest {
             errors.forEach(System.out::println);
         }
 
-        assertEquals(expectedErrors, errors, "The errors do not match the expected ones.");
+        assertEquals(expectedErrors, errors);
     }
+    // @Test
+    // public void testParseAndValidateUsers_invalidMoviesFile(){
+    //     String moviesFilepath = "src/main/resources/Testing/longermovieswitherrors.txt";
+    //     validator.parseAndValidateMovies(moviesFilepath);
+
+    //     String usersFilepath = "src/main/resources/Testing/longeruserswithnoerrors.txt";
+    //     List<String> errors = validator.parseAndValidateUsers(usersFilepath);
+    //     List<String> expectedErrors = List.of(
+    //         "ERROR: Movie Title \"The Shawshank redemption\" is wrong at line 1", // Wrong title
+    //         "ERROR: Movie Id letters \"TR002\" are wrong at line 3",              // Wrong letters in ID
+    //         "ERROR: Movie genre \"Crimea\" is not supported at line 6",           // Wrong genre
+    //         "ERROR: Movie has no genres at line 8",                               // No genres
+    //         "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format 
+    //         "ERROR: Movie Id format \"SMATV0046\" is wrong at line 11",           // Wrong title
+    //         "ERROR: Movie genre \"Familia\" is not supported at line 12",         // Wrong genre
+    //         "ERROR: Movie Id numbers \"TKS003\" aren't unique at line 13",        // non unique ID numbers
+    //         "ERROR: Movie Title \"\" is wrong at line 15",                        // Empty title
+    //         "ERROR: Movie Title \"1917\" is wrong at line 19"                    // Title with numbers
+    //     );
+    //     //("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber + " is not in the movies file");
+    //     assertEquals(expectedErrors, errors);
+    // }
 }

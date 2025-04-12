@@ -10,11 +10,11 @@ WALL-E, WALLE005, walle
 Family, Romance, Scifi
 Spider-man: Across The Spider-Verse, SMATV0046
 Action, Scifi, Familia
-The King’s Speech, TKS007
+The King’s Speech, TKS003
 Drama
-Get Out, GO008
+, GO008
 Horror, Thriller
-Inside Out, IO009
-Family, Comedy, Drama
 A Beautiful Mind, ABM010
 Drama, Romance
+1917, NS004
+Action
