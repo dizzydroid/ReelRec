@@ -323,7 +323,7 @@ public class ValidatorTest {
 
     @Test
     public void testParseAndValidateMovies_inValidFile() {
-        String filepath = "src/main/resources/Testing/longermovieswitherrors.txt";
+        String filepath = "src/main/resources/Testing/Longermovieswitherrors.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
 
         // Expected errors based on the issues in the file
