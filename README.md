@@ -56,10 +56,10 @@ It leverages a simple genre-based recommendation engine:
     - `reelrec-1.0.jar` (this is the GUI application)
   
    In case you want to run the CLI version, can edit the `pom.xml` file to include the CLI module and build it as well.
-   > [!NOTE]  
-   > This can be done by setting `mainClass` to `ReelRecCLI` in the `pom.xml` file.
+    > **NOTE**:  
+    > This can be done by setting `mainClass` to `ReelRecCLI` in the `pom.xml` file.
 
-3. **Default Input Files:**
+4. **Default Input Files:**
    The `resources` folder contains sample input files:
    - `movies.txt`
    - `users.txt`
@@ -129,6 +129,7 @@ ReelRec has undergone extensive testing:
 
 ### Running Tests:
 To run the tests, navigate to [`src/test/java`](src/test/java) and execute the test files using your preferred IDE or command line.
+
 ---
 
 ## 🤝 Contributing
