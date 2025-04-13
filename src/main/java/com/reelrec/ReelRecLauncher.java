@@ -1,3 +1,5 @@
+// This class is deprecated refer to ReelRecFrame for the new implementation
+
 package com.reelrec;
 
 import javax.swing.*;
