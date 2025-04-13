@@ -105,6 +105,7 @@ public class Validator {
             String line;
             String movetitle, movieId = null, result;
             boolean validId;
+            // int numOfValidGenres = 0;
             List<String> errors = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 validId = false;
@@ -129,6 +130,7 @@ public class Validator {
                 }
                 line = reader.readLine();
                 lineNumber++;
+                // numOfValidGenres = 0;
                 if (!line.isEmpty()) {
                     parts = line.split(",");
                     for (String genre : parts) {
@@ -137,11 +139,14 @@ public class Validator {
                         if (!result.equals("")) {
                             errors.add(result + " at line " + lineNumber + " in the movies file.");
                         }
+                        // else{
+                        //     numOfValidGenres++;
+                        // }
                     }
                 } else {
                     errors.add("ERROR: Movie has no genres at line " + lineNumber + " in the movies file.");
                 }
-                if(validId){
+                if(validId){ // add later && numOfValidGenres > 0
                     String numberPart = movieId.replaceAll("[^0-9]", "");
                     this.existingMovieIds.add(movieId);
                     this.existingMovieIdNumbers.add(numberPart);
@@ -169,12 +174,13 @@ public class Validator {
             String username, userId = null, result;
             List<String> errors = new ArrayList<>();
             boolean validId;
+            // int numOfValidMovies = 0;
             while ((line = reader.readLine()) != null) {
                 validId = false;
                 lineNumber++;
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
-                    username = parts[0].trim();
+                    username = parts[0];
                     userId = parts[1].trim();
                     result = checkUserName(username);
                     if (!result.equals("")) {
@@ -192,6 +198,7 @@ public class Validator {
                 }
                 line = reader.readLine();
                 lineNumber++;
+                // numOfValidMovies = 0;
                 if (!line.isEmpty()) {
                     parts = line.split(",");
                     for (String movieId : parts) {
@@ -200,11 +207,14 @@ public class Validator {
                             errors.add("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber
                                     + " is not in the movies file");
                         }
+                        // else{
+                        //     numOfValidMovies++;
+                        // }
                     }
                 } else {
                     errors.add("ERROR: User has no movies at line " + lineNumber + " in the users file.");
                 }
-                if(validId){
+                if(validId){ // add later && numOfValidMovies > 0
                     this.existingUserIds.add(userId);
                 }
                 
