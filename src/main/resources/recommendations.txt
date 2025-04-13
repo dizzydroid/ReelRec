@@ -1,0 +1,24 @@
+John Doe, 12345678X
+The Godfather, Pulp Fiction, Gladiator, Forrest Gump, Inception, The Matrix
+
+Jane Smith, 87654321Y
+The Dark Knight, The Shawshank Redemption, Gladiator, Forrest Gump, The Matrix
+
+Alice Johnson, 1122334
+ERROR: User Id "1122334" is wrong at line 5 in the users file.
+No recommendations
+
+Bob Brown, 99887766W
+ERROR: Movie Id "AVS013" at line 8 is not in the movies file
+Inception, The Matrix, Gladiator, The Godfather, Pulp Fiction, The Shawshank Redemption, Forrest Gump
+
+Charlie Black, 55443322V
+Gladiator, Forrest Gump, Inception, The Matrix
+
+Eric Green, 44332211T
+The Godfather, The Dark Knight, Pulp Fiction, Gladiator, Forrest Gump, Inception
+
+Diana White, 66778899U
+ERROR: Movie Id "AA013" at line 14 is not in the movies file
+No recommendations
+

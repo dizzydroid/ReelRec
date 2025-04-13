@@ -13,12 +13,28 @@ import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
+        // Determine file paths from command line arguments if provided.
+        String moviesFilePath;
+        String usersFilePath;
+        String recommendationsFilePath;
+        
+        if (args.length >= 2) {
+            moviesFilePath = args[0];
+            usersFilePath = args[1];
+            // If a third argument is provided, use it; otherwise, use the default for recommendations.
+            if (args.length >= 3) {
+                recommendationsFilePath = args[2];
+            } else {
+                recommendationsFilePath = "src/main/resources/recommendations.txt";
+            }
+        } else {
+            moviesFilePath = "src/main/resources/movies.txt";
+            usersFilePath = "src/main/resources/users.txt";
+            recommendationsFilePath = "src/main/resources/recommendations.txt";
+        }
+        
         printWelcomeMessage();
 
-        String moviesFilePath = "src/main/resources/movies.txt";
-        String usersFilePath = "src/main/resources/users.txt";
-
-        String recommendationsFilePath = "src/main/resources/recommendations.txt";
         // Clear recommendations file
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(recommendationsFilePath, false))) {
         } catch (IOException e) {
@@ -34,7 +50,7 @@ public class Main {
         ArrayList<Integer> invalidMovieLines = validator.extractErrorLines(movieValidationErrors);
         if (!movieValidationErrors.isEmpty()) {
             printValidationWarnings("MOVIE FILE WARNINGS", movieValidationErrors);
-            // Check if there are critical errors that prevent any processing
+            // Check for critical errors
             for (String error : movieValidationErrors) {
                 if (error.contains("ERROR: File not found") || error.contains("ERROR: Cannot read file")) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(recommendationsFilePath))) {
@@ -49,15 +65,9 @@ public class Main {
 
         // Validate users
         List<String> userValidationErrors = validator.parseAndValidateUsers(usersFilePath);
-        // ArrayList<Integer> invalidUserLines =
-        // validator.extractErrorLines(userValidationErrors);
-
-        // Create a map to store user ID errors
         Map<String, String> userIdErrors = new HashMap<>();
         for (String error : userValidationErrors) {
-            // Check if this is a user ID error
             if (error.contains("ERROR: User Id")) {
-                // Try to extract the user ID from the error message
                 Pattern pattern = Pattern.compile("ERROR: User Id \"([^\"]+)\"");
                 Matcher matcher = pattern.matcher(error);
                 if (matcher.find()) {
@@ -69,7 +79,7 @@ public class Main {
 
         if (!userValidationErrors.isEmpty()) {
             printValidationWarnings("USER FILE WARNINGS", userValidationErrors);
-            // Check if there are critical errors that prevent any processing
+            // Check for critical errors
             for (String error : userValidationErrors) {
                 if (error.contains("ERROR: File not found") || error.contains("ERROR: Cannot read file")) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(recommendationsFilePath))) {
@@ -87,8 +97,7 @@ public class Main {
         try {
             System.out.println("\n📂 Loading data files...");
             recSys.loadMoviesFromFile(moviesFilePath, invalidMovieLines);
-
-            // We want to process all users, including those with validation errors
+            // Process all users, even those with validation errors.
             recSys.loadUsersFromFile(usersFilePath, new ArrayList<>(), validMovieIds);
             System.out.println("✅ Data loaded successfully!");
         } catch (IOException e) {
@@ -96,18 +105,16 @@ public class Main {
             return;
         }
 
-        // Apply user ID errors to the loaded users
+        // Apply user ID errors to the loaded users.
         List<User> users = recSys.getUsers();
         for (User user : users) {
-            // Check if this user has an ID error
             if (userIdErrors.containsKey(user.getId())) {
-                // ID error takes precedence over movie errors
                 user.setErrorMessage(userIdErrors.get(user.getId()));
-                user.clearWatchList(); // Clear watchlist since user is invalid
+                user.clearWatchList(); // Clear watchlist since user is invalid.
             }
         }
 
-        // For every user, write recommendations to the output file
+        // For every user, write recommendations to the output file.
         System.out.println("\n🎬 Generating recommendations...");
         int processedUsers = 0;
         for (User user : users) {
@@ -125,7 +132,7 @@ public class Main {
     }
 
     /**
-     * Prints a fancy welcome message for the application
+     * Prints a fancy welcome message for the application.
      */
     private static void printWelcomeMessage() {
         System.out.println("\n" +
@@ -138,7 +145,7 @@ public class Main {
     }
 
     /**
-     * Prints validation warnings in a more readable format
+     * Prints validation warnings in a more readable format.
      */
     private static void printValidationWarnings(String title, List<String> warnings) {
         System.out.println("\n⚠️ " + title + " ⚠️");
