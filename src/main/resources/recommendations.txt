@@ -1,147 +1,24 @@
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
+John Doe, 12345678X
+The Godfather, Pulp Fiction, Gladiator, Forrest Gump, Inception, The Matrix
 
-📋 USER PROFILE
-   Name: John Doe
-   ID: 12345678X
+Jane Smith, 87654321Y
+The Dark Knight, The Shawshank Redemption, Gladiator, Forrest Gump, The Matrix
 
-🎬 MOVIE RECOMMENDATIONS
-   1. The Godfather
-   2. Pulp Fiction
-   3. Gladiator
-   4. Forrest Gump
-   5. Inception
-   6. The Matrix
+Alice Johnson, 1122334
+ERROR: User Id "1122334" is wrong at line 5 in the users file.
+No recommendations
 
-🍿 MOVIES YOU LIKE
-   1. The Shawshank Redemption
-   2. The Dark Knight
+Bob Brown, 99887766W
+ERROR: Movie Id "AVS013" at line 8 is not in the movies file
+Inception, The Matrix, Gladiator, The Godfather, Pulp Fiction, The Shawshank Redemption, Forrest Gump
 
-────────────────────────────────────────────────────────────────
+Charlie Black, 55443322V
+Gladiator, Forrest Gump, Inception, The Matrix
 
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
+Eric Green, 44332211T
+The Godfather, The Dark Knight, Pulp Fiction, Gladiator, Forrest Gump, Inception
 
-📋 USER PROFILE
-   Name: Jane Smith
-   ID: 87654321Y
-
-🎬 MOVIE RECOMMENDATIONS
-   1. The Dark Knight
-   2. The Shawshank Redemption
-   3. Gladiator
-   4. Forrest Gump
-   5. The Matrix
-
-🍿 MOVIES YOU LIKE
-   1. The Godfather
-   2. Pulp Fiction
-   3. Inception
-
-────────────────────────────────────────────────────────────────
-
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
-
-📋 USER PROFILE
-   Name: Alice Johnson
-   ID: 1122334
-
-⚠️ VALIDATION ERROR
-   ERROR: User Id "1122334" is wrong at line 5 in the users file.
-
-🎬 MOVIE RECOMMENDATIONS
-   No recommendations available for this user.
-
-────────────────────────────────────────────────────────────────
-
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
-
-📋 USER PROFILE
-   Name: Bob Brown
-   ID: 99887766W
-
-⚠️ VALIDATION ERROR
-   ERROR: Movie Id "AVS013" at line 8 is not in the movies file
-
-🎬 MOVIE RECOMMENDATIONS
-   1. Inception
-   2. The Matrix
-   3. Gladiator
-   4. The Godfather
-   5. Pulp Fiction
-   6. The Shawshank Redemption
-   7. Forrest Gump
-
-🍿 MOVIES YOU LIKE
-   1. Back To The Future
-   2. The Dark Knight
-
-────────────────────────────────────────────────────────────────
-
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
-
-📋 USER PROFILE
-   Name: Charlie Black
-   ID: 55443322V
-
-🎬 MOVIE RECOMMENDATIONS
-   1. Gladiator
-   2. Forrest Gump
-   3. Inception
-   4. The Matrix
-
-🍿 MOVIES YOU LIKE
-   1. The Shawshank Redemption
-   2. The Godfather
-   3. The Dark Knight
-   4. Pulp Fiction
-
-────────────────────────────────────────────────────────────────
-
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
-
-📋 USER PROFILE
-   Name: Eric Green
-   ID: 44332211T
-
-🎬 MOVIE RECOMMENDATIONS
-   1. The Godfather
-   2. The Dark Knight
-   3. Pulp Fiction
-   4. Gladiator
-   5. Forrest Gump
-   6. Inception
-
-🍿 MOVIES YOU LIKE
-   1. The Shawshank Redemption
-   2. The Matrix
-   3. Back To The Future
-
-────────────────────────────────────────────────────────────────
-
-╔══════════════════════════════════════════════════════════════╗
-║                      REELREC RECOMMENDATIONS                 ║
-╚══════════════════════════════════════════════════════════════╝
-
-📋 USER PROFILE
-   Name: Diana White
-   ID: 66778899U
-
-⚠️ VALIDATION ERROR
-   ERROR: Movie Id "AA013" at line 14 is not in the movies file
-
-🎬 MOVIE RECOMMENDATIONS
-   No recommendations available for this user.
-
-────────────────────────────────────────────────────────────────
+Diana White, 66778899U
+ERROR: Movie Id "AA013" at line 14 is not in the movies file
+No recommendations
 
