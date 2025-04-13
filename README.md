@@ -3,12 +3,11 @@
 </div>
 
 # ReelRec: Your Personal Movie Recommender 🎬🍿
-
 <div align="center">
-  
-![Project Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)  
-[![Java](https://img.shields.io/badge/Java-8%2B-orange.svg)](https://www.java.com)  
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  
+
+![Project Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)
+[![Java](https://img.shields.io/badge/Java-8+-orange.svg)](https://www.java.com)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
 ![Have a nice day!](https://img.shields.io/badge/Have_a-Nice_Day!-ff69b4)
 
 </div>
