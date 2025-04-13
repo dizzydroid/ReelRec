@@ -287,7 +287,7 @@ public class ValidatorTest {
 
     @Test
     public void testParseAndValidateMovies_ValidFile() {
-        String filepath = "src/main/resources/Testing/longermovieswithnoerrors.txt";
+        String filepath = "src/test/resources/longermovieswithnoerrors.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid movies file");
     }
@@ -295,17 +295,17 @@ public class ValidatorTest {
     @Test
     public void testParseAndValidateUsers_ValidFile() {
         // Ensure movies are validated first to populate existingMovieIds
-        String moviesFilepath = "src/main/resources/Testing/longermovieswithnoerrors.txt";
+        String moviesFilepath = "src/test/resources/longermovieswithnoerrors.txt";
         validator.parseAndValidateMovies(moviesFilepath);
 
-        String usersFilepath = "src/main/resources/Testing/longeruserswithnoerrors.txt";
+        String usersFilepath = "src/test/resources/longeruserswithnoerrors.txt";
         List<String> errors = validator.parseAndValidateUsers(usersFilepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid users file");
     }
 
     @Test
     public void testParseAndValidateMovies_ShortFile() {
-        String filepath = "src/main/resources/Testing/movies_small.txt";
+        String filepath = "src/test/resources/movies_small.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid short movies file");
     }
@@ -313,17 +313,17 @@ public class ValidatorTest {
     @Test
     public void testParseAndValidateUsers_ShortFile() {
         // Ensure movies are validated first to populate existingMovieIds
-        String moviesFilepath = "src/main/resources/Testing/movies_small.txt";
+        String moviesFilepath = "src/test/resources/movies_small.txt";
         validator.parseAndValidateMovies(moviesFilepath);
 
-        String usersFilepath = "src/main/resources/Testing/users_small.txt";
+        String usersFilepath = "src/test/resources/users_small.txt";
         List<String> errors = validator.parseAndValidateUsers(usersFilepath);
         assertTrue(errors.isEmpty(), "Expected no errors for a valid short users file");
     }
 
     @Test
     public void testParseAndValidateMovies_inValidFile() {
-        String filepath = "src/main/resources/Testing/Longermovieswitherrors.txt";
+        String filepath = "src/test/resources/Longermovieswitherrors.txt";
         List<String> errors = validator.parseAndValidateMovies(filepath);
 
         // Expected errors based on the issues in the file
@@ -347,26 +347,4 @@ public class ValidatorTest {
 
         assertEquals(expectedErrors, errors);
     }
-    // @Test
-    // public void testParseAndValidateUsers_invalidMoviesFile(){
-    //     String moviesFilepath = "src/main/resources/Testing/longermovieswitherrors.txt";
-    //     validator.parseAndValidateMovies(moviesFilepath);
-
-    //     String usersFilepath = "src/main/resources/Testing/longeruserswithnoerrors.txt";
-    //     List<String> errors = validator.parseAndValidateUsers(usersFilepath);
-    //     List<String> expectedErrors = List.of(
-    //         "ERROR: Movie Title \"The Shawshank redemption\" is wrong at line 1", // Wrong title
-    //         "ERROR: Movie Id letters \"TR002\" are wrong at line 3",              // Wrong letters in ID
-    //         "ERROR: Movie genre \"Crimea\" is not supported at line 6",           // Wrong genre
-    //         "ERROR: Movie has no genres at line 8",                               // No genres
-    //         "ERROR: Movie Formatting is wrong at line 9",                         // Wrong format 
-    //         "ERROR: Movie Id format \"SMATV0046\" is wrong at line 11",           // Wrong title
-    //         "ERROR: Movie genre \"Familia\" is not supported at line 12",         // Wrong genre
-    //         "ERROR: Movie Id numbers \"TKS003\" aren't unique at line 13",        // non unique ID numbers
-    //         "ERROR: Movie Title \"\" is wrong at line 15",                        // Empty title
-    //         "ERROR: Movie Title \"1917\" is wrong at line 19"                    // Title with numbers
-    //     );
-    //     //("ERROR: Movie Id \"" + movieId + "\" at line " + lineNumber + " is not in the movies file");
-    //     assertEquals(expectedErrors, errors);
-    // }
 }
