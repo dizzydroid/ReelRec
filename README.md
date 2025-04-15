@@ -6,6 +6,7 @@
 <div align="center">
 
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)
+![Github Build status](https://github.com/dizzydroid/reelrec/actions/workflows/ci.yml/badge.svg)
 [![Java](https://img.shields.io/badge/Java-8+-orange.svg)](https://www.java.com)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) 
 ![Have a nice day!](https://img.shields.io/badge/Have_a-Nice_Day!-ff69b4)
@@ -55,7 +56,7 @@ It leverages a simple genre-based recommendation engine:
    After building, you’ll find the following file in the `target` directory:
     - `reelrec-1.0.jar` (this is the GUI application)
   
-   In case you want to run the CLI version, can edit the `pom.xml` file to include the CLI module and build it as well.
+   In case you want to run the CLI version, you can edit the `pom.xml` file to include the CLI module and build it as well.
     > **NOTE**:  
     > This can be done by setting `mainClass` to `ReelRecCLI` in the `pom.xml` file.
 
