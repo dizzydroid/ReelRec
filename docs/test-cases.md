@@ -1,5 +1,27 @@
 # Test Cases for Movie Recommendation System
 
+This document outlines the test cases designed to verify the functionality of the ReelRec application, focusing primarily on **Black-Box testing techniques** and demonstrating **Data Flow verification** through end-to-end scenarios.
+
+## Black-Box Testing Strategy
+
+Black-box testing was performed by focusing on the application's requirements and functionality without examining the internal code structure. The primary techniques used were:
+
+1.  **Equivalence Partitioning:** Input data was divided into valid and invalid partitions. Test cases were designed to cover representative examples from each partition.
+    *   *Examples:* Valid/invalid movie titles, valid/invalid movie IDs (format, uniqueness), valid/invalid user names, valid/invalid user IDs (format, length, uniqueness), valid/invalid genres, valid/invalid watched movie lists (including references to non-existent movies).
+2.  **Boundary Value Analysis:** Test cases focused on the boundaries between partitions.
+    *   *Examples:* Empty input files (`movies.txt`, `users.txt`), user files with exactly one user, users with empty watchlists, user IDs of exact required length.
+3.  **Error Guessing / Scenario Testing:** Based on potential areas of complexity or common errors, specific scenarios were tested.
+    *   *Examples:* Handling of file not found errors, handling of unreadable/unwritable files, processing files with mixed valid and invalid entries, scenarios resulting in "No recommendations".
+
+## Data Flow Verification through Scenarios
+
+While dedicated data-flow tests were not created as separate test suites, the end-to-end scenarios documented below implicitly verify critical data flows within the application. By providing specific inputs and checking the final `recommendations.txt` output or error conditions, we ensure that data (like file paths, validation results, error messages, loaded movie/user objects, recommendation lists) is correctly defined, used, and propagated between the main components (`ReelRecApp`, `Validator`, `RecommendationSystem`).
+
+*   *Example Data Flow Tested:* An invalid User ID format in `users.txt` is detected by `Validator`, the error information flows through `ReelRecApp`, is associated with the `User` object, and is correctly reflected in the final `recommendations.txt` output. (See test case corresponding to `AppEndToEndTest.testApp_userFileHasInvalidUserIdFormat`).
+*   *Example Data Flow Tested:* A `FileNotFoundException` during file processing is caught, and the corresponding error message is written to the `recommendations.txt` file. (See test cases corresponding to `testApp_movieFileMissing_outputsErrorToRecFile` and `testApp_usersFileMissing_outputsErrorToRecFile`).
+
+## Test Case Table
+
 | Scen # | Scenario Description                                                          | Req #    | Cond #   | Test Data                                                                                                                                                           | Test Conditions/Steps                                                                                                                                                                                                                                        | Expected Results/Comments                                                                                                                                                                           | Post-Conditions                                                  | Actual Results       | Pass/Fail (Y/N) |
 |--------|-------------------------------------------------------------------------------|----------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|----------------------|-----------------|
 | 1      | Validate proper movie title with correct capitalization                       | Req-1.1  | Cond-1.1 | Movie Title: **"The Shawshank Redemption"**                                                                                                                          | Invoke `checkMovieTitle("The Shawshank Redemption")`                                                                                                                                                                                                        | No error message returned; title is deemed valid                                                                                                              | Title accepted as valid                                          | As Expected                  | Y               |

@@ -6,7 +6,7 @@
     
     <groupId>com.reelrec</groupId>
     <artifactId>reelrec</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -23,12 +23,10 @@
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- Add other dependencies here if needed -->
     </dependencies>
 
     <build>
-        <plugins>
-            <!-- Maven compiler plugin for Java 17 -->
+    <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -61,6 +59,35 @@
             </executions>
         </plugin>
 
-        </plugins>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.13</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                    <configuration>
+                        <excludes>
+                            <exclude>com/reelrec/ReelRecFrame*</exclude>
+                            <exclude>com/reelrec/ReelRecCLI*</exclude>
+                            <exclude>com/reelrec/Main*</exclude>
+                            <exclude>com/reelrec/ReelRecProcessor*</exclude>
+                        </excludes>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+    </plugins>
+
     </build>
 </project>

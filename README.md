@@ -54,7 +54,7 @@ It leverages a simple genre-based recommendation engine:
    mvn clean package
    ```
    After building, you’ll find the following file in the `target` directory:
-    - `reelrec-1.0.jar` (this is the GUI application)
+    - `reelrec-<ver>.jar` (this is the GUI application)
   
    In case you want to run the CLI version, you can edit the `pom.xml` file to include the CLI module and build it as well.
     > **NOTE**:  
@@ -79,7 +79,7 @@ It leverages a simple genre-based recommendation engine:
 
 ### GUI Application
 
-1. **Navigate to the `reelrec-1.0` Folder:**
+1. **Navigate to the `reelrec-<ver>` Folder:**
    - Run the GUI application by either double‑clicking the jar (e.g., `reelrec-1.0.jar`) or by using the command line:
      ```bash
      java -jar reelrec-1.0.jar
@@ -112,7 +112,7 @@ It leverages a simple genre-based recommendation engine:
 
 ## 📂 Folder Structure
 
-- **reelrec-1.0:** GUI application.
+- **reelrec-<ver>:** GUI application.
 - **reelrec_CLI:** CLI application.
 - **resources:** Default input files.
 - **README.md:** This file.
@@ -122,14 +122,39 @@ It leverages a simple genre-based recommendation engine:
 
 ## 🧪 Testing
 
-ReelRec has undergone extensive testing:
-- **Unit Testing:** Focused on individual components (using JUnit).
-- **Integration Testing:** Ensuring the modules work together seamlessly.
-- **System Testing:** End-to-end testing validates overall functionality.
-- **Black Box & Data Flow Testing:** Ensuring inputs result in correct outputs while covering all logic paths.
+ReelRec has undergone extensive testing to ensure reliability and correctness, including:
 
-### Running Tests:
-To run the tests, navigate to [`src/test/java`](src/test/java) and execute the test files using your preferred IDE or command line.
+*   **Unit Testing:** Focused on individual components (`Validator`, `RecommendationSystem`, `Movie`, `User`) using JUnit 5. *(See `src/test/java/com/reelrec/`)*
+*   **Integration Testing:** Verified the interaction between components using multiple strategies:
+    *   Top-Down testing of the core `ReelRecProcessor` logic using Stubs (`IntegrationTest.java`).
+    *   System-level integration testing of the entire application flow with real components (`AppEndToEndTest.java`).
+    *   *(See `docs/integration-tests.md` for detailed strategy)*.
+*   **Black-Box Testing:** Validated application functionality against requirements using techniques like equivalence partitioning and boundary value analysis, primarily implemented via `AppEndToEndTest.java`. *(See `docs/test-cases.md`)*.
+*   **White-Box Testing:** Ensured internal logic paths and conditions were covered, guided by code coverage analysis. *(See `docs/integration-tests.md`)*.
+*   **Data Flow Testing:** Verified implicitly through unit and integration tests ensuring data (errors, IDs, objects, recommendations) flows correctly between components under various scenarios.
+
+### Running Tests and Viewing Reports
+
+You can execute the full test suite and generate reports using Maven:
+
+1.  **Open a terminal or command prompt.**
+2.  **Navigate to the root directory** of the cloned ReelRec project (where the `pom.xml` file is located).
+3.  **Run the Maven test command:**
+    ```bash
+    mvn clean test
+    ```
+    *   This command cleans previous builds, compiles the code, runs all JUnit tests, and (due to the POM configuration) generates the code coverage report.
+
+4.  **Viewing Test Results:**
+    *   Maven Surefire plugin generates test execution reports.
+    *   Look inside the `target/surefire-reports/` directory.
+    *   You'll find `.txt` and `.xml` files summarizing the test outcomes (number run, failures, errors, skipped). `TEST-*.xml` files contain detailed results for each test class.
+
+5.  **Viewing Code Coverage Report:**
+    *   The JaCoCo Maven plugin generates an HTML code coverage report.
+    *   Navigate to the `target/site/jacoco/` directory.
+    *   Open the **`index.html`** file in your web browser.
+    *   This report provides a detailed breakdown of line and branch coverage for each class and method (excluding configured classes like the GUI, CLI, and Main). You can drill down into classes to see specific lines highlighted in green (covered), red (not covered), or yellow (partially covered branches).
 
 ---
 
