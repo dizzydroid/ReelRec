@@ -37,6 +37,8 @@ public class ReelRecCLI {
                 recommendationsFilePath = reader.readLine().trim();
                 if (recommendationsFilePath.isEmpty()) {
                     recommendationsFilePath = "recommendations.txt";
+                } if (!recommendationsFilePath.endsWith(".txt")) {
+                    recommendationsFilePath += ".txt";
                 }
             } catch (Exception e) {
                 System.err.println("Error reading input: " + e.getMessage());

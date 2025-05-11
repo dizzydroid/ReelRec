@@ -133,6 +133,9 @@ public class ReelRecFrame extends JFrame {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
                 recommendationsField.setText(file.getAbsolutePath());
+                if (!file.getAbsolutePath().endsWith(".txt")) {
+                    recommendationsField.setText(file.getAbsolutePath() + ".txt");
+                }
             }
         });
         
