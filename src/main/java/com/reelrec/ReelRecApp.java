@@ -107,7 +107,7 @@ public class ReelRecApp {
         System.out.println("\n" +
                 "╔══════════════════════════════════════════════════════════════╗\n" +
                 "║                                                              ║\n" +
-                "║  🎬 🍿  WELCOME TO REELREC - THE MOVIE RECOMMENDER  🍿 🎬   ║\n" +
+                "║  🎬 🍿  WELCOME TO REELREC - THE MOVIE RECOMMENDER  🍿 🎬    ║\n" +
                 "║                                                              ║\n" +
                 "╚══════════════════════════════════════════════════════════════╝\n");
         System.out.println("Your personal movie recommendation system is starting up...\n");
